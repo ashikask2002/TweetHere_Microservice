@@ -13,7 +13,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenheader := c.GetHeader("authorization")
 		if tokenheader == "" {
-			response := response.ClinetResponse(http.StatusUnauthorized, "no auth head provided", nil, nil)
+			response := response.ClientResponse(http.StatusUnauthorized, "no auth head provided", nil, nil)
 			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
 			return
@@ -21,7 +21,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 
 		splited := strings.Split(tokenheader, " ")
 		if len(splited) != 2 {
-			response := response.ClinetResponse(http.StatusUnauthorized, "invalid token format", nil, nil)
+			response := response.ClientResponse(http.StatusUnauthorized, "invalid token format", nil, nil)
 			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
 			return
@@ -30,7 +30,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 		tokenpart := splited[1]
 		tokenclaims, err := helper.ValidateToken(tokenpart)
 		if err != nil {
-			response := response.ClinetResponse(http.StatusUnauthorized, "Invalid Token", nil, err.Error())
+			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token", nil, err.Error())
 			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
 			return

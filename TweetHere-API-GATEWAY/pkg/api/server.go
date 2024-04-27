@@ -18,7 +18,7 @@ func NewServerHTTP(adminHandler *handler.AdminHandler) *ServerHttp {
 	router.Use(gin.Logger())
 
 	router.POST("/admin/login", adminHandler.LoginHandler)
-	router.POST("/admin/signup", adminHandler.AdminSignup)
+	router.POST("/admin/signup", adminHandler.AdminSignUp)
 
 	router.Use(middleware.AdminAuthMiddleware())
 
@@ -27,7 +27,7 @@ func NewServerHTTP(adminHandler *handler.AdminHandler) *ServerHttp {
 
 func (s *ServerHttp) Start() {
 	log.Printf("starting server on :3000")
-	err := s.engine.Run(":4000")
+	err := s.engine.Run(":5000")
 	if err != nil {
 		log.Printf("error while starting the server")
 	}

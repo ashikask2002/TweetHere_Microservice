@@ -7,7 +7,7 @@ type Response struct {
 	Error      interface{} `json:"error"`
 }
 
-func ClinetResponse(statuscode int, message string, data interface{}, err interface{}) Response {
+func ClientResponse(statuscode int, message string, data interface{}, err interface{}) Response {
 	return Response{
 		StatusCode: statuscode,
 		Message:    message,
