@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"TweetHere-admin/pkg/utils/models"
+	"Tweethere-Auth/pkg/utils/models"
 	"errors"
 	"fmt"
 	"time"
@@ -27,6 +27,7 @@ func PasswordHash(password string) (string, error) {
 }
 
 func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
+
 	claims := &authCustomClaimsAdmin{
 		Firstname: admin.Firstname,
 		Lastname:  admin.Lastname,
@@ -36,8 +37,9 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte("123456789"))
+
 	if err != nil {
 		fmt.Println("Error is ", err)
 		return "", err

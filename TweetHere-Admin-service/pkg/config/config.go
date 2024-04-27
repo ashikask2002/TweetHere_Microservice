@@ -1,6 +1,10 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	DBHost     string `mapstructure:"DB_HOST"`
@@ -30,5 +34,6 @@ func LoadConfig() (Config, error) {
 	if err := viper.Unmarshal(&config); err != nil {
 		return config, err
 	}
+	fmt.Println("configggg", config)
 	return config, nil
 }

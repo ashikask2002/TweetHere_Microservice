@@ -1,8 +1,8 @@
 package interfaces
 
 import (
-	"TweetHere-admin/pkg/domain"
-	"TweetHere-admin/pkg/utils/models"
+	"Tweethere-Auth/pkg/domain"
+	"Tweethere-Auth/pkg/utils/models"
 )
 
 

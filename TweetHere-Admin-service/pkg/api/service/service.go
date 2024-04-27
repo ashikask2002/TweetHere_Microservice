@@ -1,19 +1,19 @@
 package service
 
 import (
-	"TweetHere-admin/pkg/pb"
-	interfaces "TweetHere-admin/pkg/usecase/interface"
-	"TweetHere-admin/pkg/utils/models"
+	"Tweethere-Auth/pkg/pb"
+	interfaces "Tweethere-Auth/pkg/usecase/interface"
+	"Tweethere-Auth/pkg/utils/models"
 	"context"
 	"fmt"
 )
 
 type AdminServer struct {
 	adminUseCase interfaces.AdminUseCase
-	pb.UnimplementedAdminServer
+	pb.UnimplementedAuthServiceServer
 }
 
-func NewAdminServer(useCase interfaces.AdminUseCase) pb.AdminServer {
+func NewAdminServer(useCase interfaces.AdminUseCase) pb.AuthServiceServer {
 	return &AdminServer{
 		adminUseCase: useCase,
 	}
@@ -47,10 +47,12 @@ func (ad *AdminServer) AdminSignUp(ctx context.Context, req *pb.AdminSignupReque
 }
 
 func (ad *AdminServer) AdminLogin(ctx context.Context, req *pb.AdminLoginRequest) (*pb.AdminLoginResponse, error) {
+	fmt.Println("ssssssssssss", req)
 	adminLogin := models.AdminLogin{
 		Email:    req.Email,
 		Password: req.Password,
 	}
+	fmt.Println("adminnnnnnnnnnnn",adminLogin)
 
 	admin, err := ad.adminUseCase.LoginHandler(adminLogin)
 	if err != nil {
@@ -64,8 +66,8 @@ func (ad *AdminServer) AdminLogin(ctx context.Context, req *pb.AdminLoginRequest
 		Email:     admin.Admin.Email,
 	}
 	return &pb.AdminLoginResponse{
-		Status: 200,
+		Status:       200,
 		AdminDetails: adminDetails,
-		Token: admin.Token,
-	},nil
+		Token:        admin.Token,
+	}, nil
 }

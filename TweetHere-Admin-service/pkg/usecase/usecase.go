@@ -1,12 +1,13 @@
 package usecase
 
 import (
-	"TweetHere-admin/pkg/domain"
-	"TweetHere-admin/pkg/helper"
-	interfaces "TweetHere-admin/pkg/repository/interface"
-	services "TweetHere-admin/pkg/usecase/interface"
-	"TweetHere-admin/pkg/utils/models"
+	"Tweethere-Auth/pkg/domain"
+	"Tweethere-Auth/pkg/helper"
+	interfaces "Tweethere-Auth/pkg/repository/interface"
+	services "Tweethere-Auth/pkg/usecase/interface"
+	"Tweethere-Auth/pkg/utils/models"
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
@@ -16,7 +17,7 @@ type adminUseCase struct {
 	adminRepository interfaces.AdminRepository
 }
 
-func newAdminUseCase(repository interfaces.AdminRepository) services.AdminUseCase {
+func NewAdminUseCase(repository interfaces.AdminRepository) services.AdminUseCase {
 	return &adminUseCase{
 		adminRepository: repository,
 	}
@@ -41,6 +42,7 @@ func (ad *adminUseCase) AdminSignUp(admin models.AdminSignUp) (*domain.TokenAdmi
 
 	}
 	tokenString, err := helper.GenerateTokenAdmin(admindata)
+	fmt.Println("token errrr is", err)
 	if err != nil {
 		return &domain.TokenAdmin{}, err
 	}

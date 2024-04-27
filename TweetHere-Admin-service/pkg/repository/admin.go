@@ -1,10 +1,11 @@
 package repository
 
 import (
-	"TweetHere-admin/pkg/domain"
-	interfaces "TweetHere-admin/pkg/repository/interface"
-	"TweetHere-admin/pkg/utils/models"
+	"Tweethere-Auth/pkg/domain"
+	interfaces "Tweethere-Auth/pkg/repository/interface"
+	"Tweethere-Auth/pkg/utils/models"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -25,26 +26,27 @@ func (ad *adminRepository) AdminSignUp(adminDetails models.AdminSignUp) (models.
 	if err := ad.DB.Raw("INSERT INTO admins (firstname,lastname,email,password) VALUES (?,?,?,?) RETURNING id,firstname,lastname,email", adminDetails.Firstname, adminDetails.Lastname, adminDetails.Email, adminDetails.Password).Scan(&model).Error; err != nil {
 		return models.AdminDetailsResponse{}, err
 	}
+	fmt.Println("modelsssssssssssss", model)
 	return model, nil
 }
 
-func (ad *adminRepository) CheckAdminExistByEmail(email string) (*domain.Admin,error){
-   var admin domain.Admin 
-   res := ad.DB.Where(&domain.Admin{Email: email}).First(&admin)
-   if res.Error != nil{
-	  if errors.Is(res.Error, gorm.ErrRecordNotFound){
-		return nil,nil
-	  }
-	  return &domain.Admin{},res.Error
-   }
-   return &admin, nil
+func (ad *adminRepository) CheckAdminExistByEmail(email string) (*domain.Admin, error) {
+	var admin domain.Admin
+	res := ad.DB.Where(&domain.Admin{Email: email}).First(&admin)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return &domain.Admin{}, res.Error
+	}
+	return &admin, nil
 }
 
-func (ad *adminRepository) FindAdminByEmail(admin models.AdminLogin) (models.AdminSignUp,error){
+func (ad *adminRepository) FindAdminByEmail(admin models.AdminLogin) (models.AdminSignUp, error) {
 	var user models.AdminSignUp
-	err := ad.DB.Raw("SELECT * FROM admins WHERE email = ?",admin.Email).Scan(&user).Error
-	if err != nil{
-		return models.AdminSignUp{},errors.New("error checking user details")
+	err := ad.DB.Raw("SELECT * FROM admins WHERE email = ?", admin.Email).Scan(&user).Error
+	if err != nil {
+		return models.AdminSignUp{}, errors.New("error checking user details")
 	}
-	return user,nil
+	return user, nil
 }

@@ -1,6 +1,6 @@
 package domain
 
-import "TweetHere-admin/pkg/utils/models"
+import "Tweethere-Auth/pkg/utils/models"
 
 type Admin struct {
 	ID        uint   `json:"id" gorm:"uniquekey; not null"`
