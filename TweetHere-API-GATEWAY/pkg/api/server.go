@@ -12,15 +12,19 @@ type ServerHttp struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(adminHandler *handler.AdminHandler) *ServerHttp {
+func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 	router := gin.New()
-
 	router.Use(gin.Logger())
 
-	router.POST("/admin/login", adminHandler.LoginHandler)
-	router.POST("/admin/signup", adminHandler.AdminSignUp)
+	router.POST("/admin/login", authHandler.LoginHandler)
+	router.POST("/admin/signup", authHandler.AdminSignUp)
+
+
+	router.POST("/user/signup",authHandler.UserSignUp)
+	router.POST("/user/login",authHandler.UserLogin)
 
 	router.Use(middleware.AdminAuthMiddleware())
+	
 
 	return &ServerHttp{engine: router}
 }

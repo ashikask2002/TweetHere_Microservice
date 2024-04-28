@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type AdminLogin struct {
 	Email    string `json:"email" binding:"required" validate:"required"`
 	Password string `json:"password" binding:"required" validate:"min=6,max=20"`
@@ -40,11 +38,35 @@ type UserLogin struct {
 }
 
 type UserSignup struct {
-	Firstname   string    `json:"firstname"`
-	Lastname    string    `json:"lastname"`
-	Username    string    `json:"username"`
-	Email       string    `json:"email"`
-	DateOfBirth string    `json:"date_of_birth"`
-	Password    string    `json:"password"`
-	CreatedAt   time.Time `json:"created_at"`
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Username    string `json:"username"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
+	Password    string `json:"password"`
+}
+
+type User struct {
+	ID          uint   `json:"id" gorm:"uniquekey; not null"`
+	Firstname   string `json:"firstname" gorm:"validate:required"`
+	Lastname    string `json:"lastname" gorm:"validate:required"`
+	Username    string `json:"username" gorm:"validate:required"`
+	Phone       string `json:"phone" gorm:"validate:required"`
+	Email       string `json:"email" gorm:"validate:required"`
+	DateOfBirth string `json:"date_of_birth" gorm:"validate:required"`
+	Password    string `json:"password" gorm:"validate:required"`
+}
+
+type UserDetailsResponse struct {
+	ID        uint   `json:"id"`
+	Firstname string `json:"firstname"`
+	Lastname  string `jsons:"lastname"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+}
+type TokenUser struct {
+	User         UserDetailsResponse
+	AccesToken   string
+	RefreshToken string
 }

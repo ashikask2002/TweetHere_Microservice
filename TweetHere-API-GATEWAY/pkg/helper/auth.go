@@ -1,9 +1,7 @@
 package helper
 
 import (
-	"TweetHere-API/pkg/utils/models"
 	"fmt"
-	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -13,25 +11,6 @@ type authCustomClaimsAdmin struct {
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email"`
 	jwt.StandardClaims
-}
-
-func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
-	claims := &authCustomClaimsAdmin{
-		Firstname: admin.Firstname,
-		Lastname:  admin.Lastname,
-		Email:     admin.Email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 48).Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	tokenString, err := token.SignedString([]byte("123456789"))
-	if err != nil {
-		fmt.Println("Error is ", err)
-		return "", err
-	}
-	return tokenString, nil
 }
 
 func ValidateToken(tokenString string) (*authCustomClaimsAdmin, error) {

@@ -10,10 +10,9 @@ import (
 
 func InitailizeAPI(cfg config.Config) (*server.ServerHttp, error) {
 	fmt.Println("vbbbbbbbbbbbbbbbbbbbbbbb")
-	adminClient := client.NewAdminClient(cfg)
+	adminClient := client.NewAuthClient(cfg)
+	authHandler := handler.NewAuthHandler(adminClient)
 
-	adminHandler := handler.NewAdminHandler(adminClient)
-
-	serverHTTP := server.NewServerHTTP(adminHandler)
+	serverHTTP := server.NewServerHTTP(authHandler)
 	return serverHTTP, nil
 }
