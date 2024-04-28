@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "./pkg/pb";
+
+service AuthService{
+    rpc AdminSignUp(AdminSignupRequest) returns(AdminSignupResponse){};
+    rpc AdminLogin(AdminLoginRequest) returns(AdminLoginResponse){};
+     rpc UserSignup (UserSignupRequest) returns (UserSignupResponse){}
+     rpc UserLogin (UserLoginRequest) returns (UserLoginResponse){}
+}
+message AdminSignupRequest{
+    string firstname=1;
+    string lastname=2;
+    string email=3;
+    string password=4;
+}
+
+message AdminSignupResponse{
+    int64 status=1;
+    AdminDetails adminDetails=2;
+    string token=3;
+    string error=4;
+}
+
+message AdminDetails{
+    uint64 id=1;
+    string firstname=2;
+    string lastname=3;
+    string email=4;
+}
+
+message AdminLoginRequest{
+    string email=1;
+    string password=2;
+}
+
+message AdminLoginResponse{
+    int64 status=1;
+    AdminDetails adminDetails=2;
+    string token=3;
+    string error=4;
+}
+
+message UserSignupRequest{
+    string firstname=1;
+    string lastname=2;
+    string username=3;
+    string phone=4;
+    string email=5;
+    string date_of_birth=6;
+    string password=7;
+}
+
+
+message UserInfo{
+    int64 id=1;
+    string firstname=2;
+    string lastname=3;
+    string username=4;
+    string email=5;  
+}
+
+message UserResponse{
+    UserInfo info=1;
+    string accessToken =2;
+    string refreshToken=3;
+}
+
+message UserSignupResponse{
+    UserResponse response=1;
+    string error=2;
+}
+
+message UserLoginRequest{
+    string email=1;
+    string password=2;
+}
+message UserLoginResponse{
+    UserResponse respone=1;
+    string error =2;
+}
