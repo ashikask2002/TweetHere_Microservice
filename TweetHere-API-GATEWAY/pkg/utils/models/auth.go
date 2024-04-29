@@ -70,3 +70,23 @@ type TokenUser struct {
 	AccesToken   string
 	RefreshToken string
 }
+
+type UserProfile struct {
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Username  string `json:"username"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	Profile   string `json:"profile"`
+	Bio       string `json:"bio"`
+}
+
+type UserProfileResponse struct {
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Username  string `json:"username"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	Profile   string `json:"profile"`
+	Bio       string `json:"bio"`
+}

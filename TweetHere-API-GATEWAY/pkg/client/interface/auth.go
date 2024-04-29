@@ -8,4 +8,5 @@ type AdminClient interface {
 
 	UserSignup(userdetails models.UserSignup) (models.TokenUser,error)
 	UserLogin(userdetails models.UserLogin) (models.TokenUser,error)
+	UserUpdateProfile(userdetails models.UserProfile) (models.UserProfileResponse)
 }

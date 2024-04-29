@@ -9,6 +9,7 @@ service AuthService{
     rpc AdminLogin(AdminLoginRequest) returns(AdminLoginResponse){};
      rpc UserSignup (UserSignupRequest) returns (UserSignupResponse){}
      rpc UserLogin (UserLoginRequest) returns (UserLoginResponse){}
+    rpc UserUpdateProfile(UserUpdateProfileRequest) returns(UserUpdateProfileResponse){}
 }
 message AdminSignupRequest{
     string firstname=1;
@@ -80,4 +81,24 @@ message UserLoginRequest{
 message UserLoginResponse{
     UserResponse respone=1;
     string error =2;
+}
+
+message UserUpdateProfileRequest{
+    string firstname=1;
+    string lastname=2;
+    string username=3;
+    string phone=4;
+    string email=5;
+    string profile=6;
+    string bio=7;
+}
+
+message UserUpdateProfileResponse{
+    string firstname=1;
+    string lastname=2;
+    string username=3;
+    string phone=4;
+    string email=6;
+    string profile=7;
+    string bio=8;
 }

@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_AdminSignUp_FullMethodName = "/admin.AuthService/AdminSignUp"
-	AuthService_AdminLogin_FullMethodName  = "/admin.AuthService/AdminLogin"
-	AuthService_UserSignup_FullMethodName  = "/admin.AuthService/UserSignup"
-	AuthService_UserLogin_FullMethodName   = "/admin.AuthService/UserLogin"
+	AuthService_AdminSignUp_FullMethodName       = "/admin.AuthService/AdminSignUp"
+	AuthService_AdminLogin_FullMethodName        = "/admin.AuthService/AdminLogin"
+	AuthService_UserSignup_FullMethodName        = "/admin.AuthService/UserSignup"
+	AuthService_UserLogin_FullMethodName         = "/admin.AuthService/UserLogin"
+	AuthService_UserUpdateProfile_FullMethodName = "/admin.AuthService/UserUpdateProfile"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -33,6 +34,7 @@ type AuthServiceClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error)
 	UserSignup(ctx context.Context, in *UserSignupRequest, opts ...grpc.CallOption) (*UserSignupResponse, error)
 	UserLogin(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
+	UserUpdateProfile(ctx context.Context, in *UserUpdateProfileRequest, opts ...grpc.CallOption) (*UserUpdateProfileResponse, error)
 }
 
 type authServiceClient struct {
@@ -79,6 +81,15 @@ func (c *authServiceClient) UserLogin(ctx context.Context, in *UserLoginRequest,
 	return out, nil
 }
 
+func (c *authServiceClient) UserUpdateProfile(ctx context.Context, in *UserUpdateProfileRequest, opts ...grpc.CallOption) (*UserUpdateProfileResponse, error) {
+	out := new(UserUpdateProfileResponse)
+	err := c.cc.Invoke(ctx, AuthService_UserUpdateProfile_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type AuthServiceServer interface {
 	AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error)
 	UserSignup(context.Context, *UserSignupRequest) (*UserSignupResponse, error)
 	UserLogin(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
+	UserUpdateProfile(context.Context, *UserUpdateProfileRequest) (*UserUpdateProfileResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedAuthServiceServer) UserSignup(context.Context, *UserSignupReq
 }
 func (UnimplementedAuthServiceServer) UserLogin(context.Context, *UserLoginRequest) (*UserLoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserLogin not implemented")
+}
+func (UnimplementedAuthServiceServer) UserUpdateProfile(context.Context, *UserUpdateProfileRequest) (*UserUpdateProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserUpdateProfile not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -191,6 +206,24 @@ func _AuthService_UserLogin_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_UserUpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserUpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UserUpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UserUpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UserUpdateProfile(ctx, req.(*UserUpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserLogin",
 			Handler:    _AuthService_UserLogin_Handler,
+		},
+		{
+			MethodName: "UserUpdateProfile",
+			Handler:    _AuthService_UserUpdateProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

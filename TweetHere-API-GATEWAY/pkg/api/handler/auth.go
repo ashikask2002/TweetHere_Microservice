@@ -23,8 +23,6 @@ func NewAuthHandler(adminClient interfaces.AdminClient) *AuthHandler {
 func (ad *AuthHandler) AdminSignUp(c *gin.Context) {
 	var adminDetails models.AdminSignup
 
-	fmt.Println("gateway", adminDetails.Email)
-
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -63,45 +61,59 @@ func (ad *AuthHandler) LoginHandler(c *gin.Context) {
 
 //user side/////////////////////////////////
 
-
-func (ad *AuthHandler)UserSignUp(c *gin.Context){
+func (ad *AuthHandler) UserSignUp(c *gin.Context) {
 	var userdetails models.UserSignup
 
-	if err := c.ShouldBindJSON(userdetails);err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"details not in correct format",nil,err.Error())
-		c.JSON(http.StatusBadRequest,errs)
+	// Print userdetails before binding JSON
+	fmt.Println("User details before binding JSON:", userdetails)
+
+	// Pass a pointer to ShouldBindJSON
+	if err := c.ShouldBindJSON(&userdetails); err != nil {
+		fmt.Println("errrrrrrrrr", err)
+		errs := response.ClientResponse(http.StatusBadRequest, "details not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 
-	user,err := ad.GRPC_Client.UserSignup(userdetails)
-	if err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"cannot authenthicate user",nil,err.Error())
-		c.JSON(http.StatusBadRequest,errs)
+	user, err := ad.GRPC_Client.UserSignup(userdetails)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "cannot authenticate user", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 
-	successres := response.ClientResponse(http.StatusOK,"successfully authenticated user",user,nil)
-	c.JSON(http.StatusOK,successres)
+	successres := response.ClientResponse(http.StatusOK, "successfully authenticated user", user, nil)
+	c.JSON(http.StatusOK, successres)
+}
 
+func (ad *AuthHandler) UserLogin(c *gin.Context) {
+	var userdetails models.UserLogin
+
+	if err := c.ShouldBindJSON(&userdetails); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "details are not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	fmt.Println("userdetailssssssssssss", userdetails)
+	user, err := ad.GRPC_Client.UserLogin(userdetails)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "user login failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	successres := response.ClientResponse(http.StatusOK, "successfully logined the user", user, nil)
+	c.JSON(http.StatusOK, successres)
 
 }
 
-func (ad *AuthHandler)UserLogin(c *gin.Context){
-	var userdetails models.UserLogin
 
-	if err := c.ShouldBindJSON(userdetails);err != nil{
+func (ad *AuthHandler) UserUpdateProfile(c *gin.Context){
+	var userdetails models.UserProfile
+
+	if err := c.ShouldBindJSON(&userdetails); err != nil{
 		errs := response.ClientResponse(http.StatusBadRequest,"details are not in correct format",nil,err.Error())
 		c.JSON(http.StatusBadRequest,errs)
 		return
 	}
-
-	user, err := ad.GRPC_Client.UserLogin(userdetails)
-	if err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"user login failed",nil,err.Error())
-		c.JSON(http.StatusBadRequest,errs)
-		return
-	}
-	successres := response.ClientResponse(http.StatusOK,"successfully logined the user",user,nil)
-	c.JSON(http.StatusOK,successres)
-	
+	user, err := ad.GRPC_Client.
 }
