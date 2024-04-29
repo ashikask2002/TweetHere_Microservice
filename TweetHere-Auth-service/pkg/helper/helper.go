@@ -17,6 +17,14 @@ type authCustomClaimsAdmin struct {
 	jwt.StandardClaims
 }
 
+type authCustomClaimsUser struct {
+	ID        uint   `json:"id"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
+	jwt.StandardClaims
+}
+
 func PasswordHash(password string) (string, error) {
 	hashpassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
@@ -63,4 +71,45 @@ func ValidateToken(tokenString string) (*authCustomClaimsAdmin, error) {
 		return claims, nil
 	}
 	return nil, fmt.Errorf("invalid token")
+}
+
+func GenerateTokenUser(user models.UserDetailsResponse) (string, string, error) {
+
+	accessTokenclaims := &authCustomClaimsUser{
+		ID:        user.ID,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Minute * 50).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+	}
+
+	refreshTokenclaims := &authCustomClaimsUser{
+		ID:        user.ID,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Email:     user.Email,
+
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 30).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+	}
+
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenclaims)
+	accessTokenstring, err := accessToken.SignedString([]byte("accesssecret"))
+	if err != nil {
+		return "", "", err
+	}
+
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenclaims)
+	refreshTokenstring, err := refreshToken.SignedString([]byte("refreshsecret"))
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessTokenstring, refreshTokenstring, nil
 }
