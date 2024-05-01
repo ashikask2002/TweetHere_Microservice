@@ -19,12 +19,27 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 	router.POST("/admin/login", authHandler.LoginHandler)
 	router.POST("/admin/signup", authHandler.AdminSignUp)
 
-
-	router.POST("/user/signup",authHandler.UserSignUp)
-	router.POST("/user/login",authHandler.UserLogin)
+	router.POST("/user/signup", authHandler.UserSignUp)
+	router.POST("/user/login", authHandler.UserLogin)
 
 	router.Use(middleware.AdminAuthMiddleware())
-	
+	{
+		adminmanagement := router.Group("/admins")
+		{
+			adminmanagement.GET("/userdetails", authHandler.GetUser)
+			adminmanagement.PATCH("/block", authHandler.BlockUser)
+			adminmanagement.PATCH("/unblock", authHandler.UnBlockUser)
+
+		}
+	}
+
+	router.Use(middleware.UserAuthMiddleware)
+	{
+		usermanagement := router.Group("/users")
+		{
+			usermanagement.POST("/profile", authHandler.UserUpdateProfile)
+		}
+	}
 
 	return &ServerHttp{engine: router}
 }

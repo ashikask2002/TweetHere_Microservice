@@ -6,6 +6,7 @@ import (
 	"TweetHere-API/pkg/utils/response"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -94,7 +95,7 @@ func (ad *AuthHandler) UserLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	fmt.Println("userdetailssssssssssss", userdetails)
+
 	user, err := ad.GRPC_Client.UserLogin(userdetails)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "user login failed", nil, err.Error())
@@ -106,14 +107,98 @@ func (ad *AuthHandler) UserLogin(c *gin.Context) {
 
 }
 
-
-func (ad *AuthHandler) UserUpdateProfile(c *gin.Context){
+func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 	var userdetails models.UserProfile
 
-	if err := c.ShouldBindJSON(&userdetails); err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"details are not in correct format",nil,err.Error())
+	idstring, _ := c.Get("id")
+	id, _ := idstring.(int)
+	fmt.Println("iddddddddddddddddddd is ", id)
+
+	if err := c.ShouldBindJSON(&userdetails); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "details are not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := ad.GRPC_Client.UserUpdateProfile(userdetails, id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "update profile failed", nil, err.Error())
+		c.JSON(http.StatusBadGateway, errs)
+		return
+	}
+	successres := response.ClientResponse(http.StatusOK, "successfully updated userprofile", user, nil)
+	c.JSON(http.StatusOK, successres)
+}
+
+func (ad *AuthHandler) GetUser(c *gin.Context) {
+	pagestr := c.Query("page")
+	page, err := strconv.Atoi(pagestr)
+
+	if err != nil {
+		errres := response.ClientResponse(http.StatusBadRequest, "page number not in correct foramt", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errres)
+		return
+
+	}
+	fmt.Println("ssssssssssssssssss")
+	user, errs := ad.GRPC_Client.GetUser(page)
+	if errs != nil {
+		errres := response.ClientResponse(http.StatusBadRequest, "error in getting the details", nil, errs.Error())
+		c.JSON(http.StatusBadRequest, errres)
+		return
+	}
+
+	successres := response.ClientResponse(http.StatusOK, "succesfully got all user details", user, nil)
+	c.JSON(http.StatusOK, successres)
+
+}
+
+func (ad *AuthHandler) BlockUser(c *gin.Context) {
+	id := c.Query("id")
+
+	err := ad.GRPC_Client.BlockUser(id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error in block user", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "successfully blocked", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func (ad *AuthHandler) UnBlockUser(c *gin.Context) {
+	id := c.Query("id")
+
+	err := ad.GRPC_Client.UnBlockUser(id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error in unblock user", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "successfully unblocked", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func(ad *AuthHandler)ChangePassword(c *gin.Context){
+	idstring,_ := c.Get("id")
+	id,_ := idstring.(int)
+
+	var ChangePassword models.ChangePassword
+
+	if err := c.BindJSON(&ChangePassword); err != nil{
+		errs := response.ClientResponse(http.StatusBadRequest,"details are not in right format",nil,err.Error())
 		c.JSON(http.StatusBadRequest,errs)
 		return
 	}
-	user, err := ad.GRPC_Client.
+
+	if err:= ad.GRPC_Client.ChangePassword(id,ChangePassword.Oldpassword,ChangePassword.NewPassword,ChangePassword.RePassword); err != nil{
+		errs := response.ClientResponse(http.StatusBadRequest,"error in changepassword",nil,err.Error())
+		c.JSON(http.StatusBadRequest,errs)
+		return
+	}
+
+	succesres := response.ClientResponse(http.StatusOK,"successfully changed the password",nil,nil)
+	c.JSON(http.StatusOK,succesres)
+
 }
+
+
