@@ -113,3 +113,11 @@ func GenerateTokenUser(user models.UserDetailsResponse) (string, string, error) 
 
 	return accessTokenstring, refreshTokenstring, nil
 }
+
+func CompareHashAndPassword(a string, b string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(a), []byte(b))
+	if err != nil {
+		return err
+	}
+	return nil
+}

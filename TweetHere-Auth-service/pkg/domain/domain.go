@@ -25,7 +25,10 @@ type User struct {
     DateOfBirth string `json:"date_of_birth" gorm:"validate:required"`
     Password    string `json:"password" gorm:"validate:required"`
     IsBlocked   bool   `json:"is_blocked"`
+    Profile     string `json:"profile"` // URL of profile picture
+    Bio         string `json:"bio"`     // User biography
 }
+
 
 
 type TokenUser struct {

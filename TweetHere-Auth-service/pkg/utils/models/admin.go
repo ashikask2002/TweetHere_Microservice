@@ -44,3 +44,44 @@ type UserDetailsResponse struct {
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 }
+
+type UserProfile struct {
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Username    string `json:"username"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
+	Profile     string `json:"profile"`
+	Bio         string `json:"bio"`
+}
+
+type UserProfileResponse struct {
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Username    string `json:"username"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
+	Profile     string `json:"profile"`
+	Bio         string `json:"bio"`
+}
+
+type UserDetails struct {
+	ID          uint   `json:"id"`
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Username    string `json:"username"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
+	IsBlocked   bool   `json:"is_blocked"`
+	Profile     string `json:"profile"`
+	Bio         string `json:"bio"`
+}
+
+type ChangePassword struct {
+	Oldpassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+	RePassword  string `json:"re_password"`
+}

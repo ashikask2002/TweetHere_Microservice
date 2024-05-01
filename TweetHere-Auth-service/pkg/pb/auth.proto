@@ -7,8 +7,16 @@ option go_package = "./pkg/pb";
 service AuthService{
     rpc AdminSignUp(AdminSignupRequest) returns(AdminSignupResponse){};
     rpc AdminLogin(AdminLoginRequest) returns(AdminLoginResponse){};
+    rpc BlockUser(BlockUserRequest) returns(BlockUserResponse){};
+    rpc UnBlockUser(UnBlockUserRequest) returns(UnBlockUserResponse){}
+    rpc GetUser(GetUserRequest) returns(GetUserResponse){};
+
+
      rpc UserSignup (UserSignupRequest) returns (UserSignupResponse){}
      rpc UserLogin (UserLoginRequest) returns (UserLoginResponse){}
+     rpc UserUpdateProfile(UserUpdateProfileRequest) returns(UserUpdateProfileResponse){}
+     rpc ChangePassword(ChangePasswordRequest) returns(ChangePasswordResponse){}
+
 }
 message AdminSignupRequest{
     string firstname=1;
@@ -80,4 +88,81 @@ message UserLoginRequest{
 message UserLoginResponse{
     UserResponse respone=1;
     string error =2;
+}
+
+message UserUpdateProfile{
+    string firstname=1;
+    string lastname=2;
+    string username=3;
+    string phone=4;
+    string email=5;
+    string date_of_birth=6;
+    string profile=7;
+    string bio=8;
+}
+message UserUpdateProfileRequest{
+    UserUpdateProfile update=1;
+    int64 id=2;
+}
+
+message UserUpdateProfileResponse{
+    string firstname=1;
+    string lastname=2;
+    string username=3;
+    string phone=4;
+    string email=5;
+    string date_of_birth=6;
+    string profile=7;
+    string bio=8;
+}
+
+message BlockUserRequest{
+    uint64 id=1;
+}
+
+message BlockUserResponse{
+    bool succes=1;
+    string error=2;
+}
+
+message UnBlockUserRequest{
+    uint64 id=1;
+
+}
+
+message UnBlockUserResponse{
+    bool succces=1;
+    string error=2;
+}
+
+message GetUserRequest{
+    int64 page=1;
+}
+message UserDetailsAtAdmin{
+    int64 id=1;
+    string firstname=2;
+    string lastname=3;
+    string username=4;
+    string phone=5;
+    string email=6;
+    string date_of_birth=7;
+    bool isblocked=8;
+    string profile=9;
+    string bio=10;
+}
+
+message GetUserResponse {
+    repeated UserDetailsAtAdmin users = 1;
+}
+
+message ChangePasswordRequest{
+    int64 id=1;
+    string oldpassword=2;
+    string newpassword=3;
+    string repassword=4;
+    
+}
+
+message ChangePasswordResponse{
+    string error=1;
 }

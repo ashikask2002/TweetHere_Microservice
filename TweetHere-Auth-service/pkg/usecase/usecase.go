@@ -119,7 +119,6 @@ func (ad *authUseCase) UserSignup(user models.UserSignup) (*domain.TokenUser, er
 }
 
 func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, error) {
-	fmt.Println("ssssssssssssss", user)
 	email, err := ad.authRepository.ChekUserExistByEmail(user.Email)
 	if err != nil {
 		return &domain.TokenUser{}, errors.New("error in email checking part")
@@ -156,4 +155,80 @@ func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, erro
 		AccesToken:   accessToken,
 		RefreshToken: refreshToken,
 	}, nil
+}
+
+func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (models.UserProfileResponse, error) {
+	fmt.Println("userdetaillllllll at usecase ", user, id)
+
+	userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
+
+	if err != nil {
+		return models.UserProfileResponse{}, errors.New("error happened while profileupdate")
+	}
+	return userdetails, nil
+}
+
+func (ad *authUseCase) GetUser(page int) ([]models.UserDetails, error) {
+	userdetails, err := ad.authRepository.GetUser(page)
+	if err != nil {
+		return []models.UserDetails{}, err
+	}
+	return userdetails, nil
+}
+
+func (ad *authUseCase) BlockUser(id string) error {
+	user, err := ad.authRepository.GetUserById(id)
+	if err != nil {
+		return err
+	}
+	if user.IsBlocked {
+		return errors.New("user already blocked")
+	} else {
+		user.IsBlocked = true
+	}
+	err = ad.authRepository.UpdateBlockUserByID(user)
+	if err != nil {
+		return errors.New("failed to block")
+	}
+	return nil
+
+}
+
+func (ad *authUseCase) UnBlockUser(id string) error {
+	user, err := ad.authRepository.GetUserById(id)
+	if err != nil {
+		return err
+	}
+	if !user.IsBlocked {
+		return errors.New("user already unblocked")
+	} else {
+		user.IsBlocked = false
+	}
+	err = ad.authRepository.UpdateBlockUserByID(user)
+	if err != nil {
+		return errors.New("failed to unblock")
+	}
+	return nil
+
+}
+
+func (ad *authUseCase) ChangePassword(id int, old string, new string, re string) error {
+	userpassword, err := ad.authRepository.GetPassword(id)
+	if err != nil {
+		errors.New("internal error")
+	}
+
+	err = helper.CompareHashAndPassword(userpassword, old)
+	if err != nil {
+		return errors.New("old password incorrect")
+	}
+	if new != re {
+		return errors.New("passwords are not matching")
+	}
+	newpassword, errr := helper.PasswordHash(new)
+	if errr != nil {
+		return errors.New("error in hashig password")
+	}
+
+	return ad.authRepository.ChangePassword(id, newpassword)
 }
