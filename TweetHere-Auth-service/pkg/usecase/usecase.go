@@ -215,7 +215,7 @@ func (ad *authUseCase) UnBlockUser(id string) error {
 func (ad *authUseCase) ChangePassword(id int, old string, new string, re string) error {
 	userpassword, err := ad.authRepository.GetPassword(id)
 	if err != nil {
-		errors.New("internal error")
+		return errors.New("internal error")
 	}
 
 	err = helper.CompareHashAndPassword(userpassword, old)
