@@ -126,6 +126,7 @@ func (ad *authClient) UserLogin(userdetails models.UserLogin) (models.TokenUser,
 }
 
 func (ad *authClient) UserUpdateProfile(userdetails models.UserProfile, id int) (models.UserProfileResponse, error) {
+	fmt.Println("isssss", id)
 	user, err := ad.Client.UserUpdateProfile(context.Background(), &pb.UserUpdateProfileRequest{
 		Update: &pb.UserUpdateProfile{
 			Firstname:   userdetails.Firstname,

@@ -22,22 +22,21 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 	router.POST("/user/signup", authHandler.UserSignUp)
 	router.POST("/user/login", authHandler.UserLogin)
 
-	router.Use(middleware.AdminAuthMiddleware())
+	router.Use(middleware.AuthMiddleware)
 	{
+
+		usermanagement := router.Group("/users")
+		{
+			usermanagement.POST("/profile", authHandler.UserUpdateProfile)
+			usermanagement.PATCH("/changepassword", authHandler.ChangePassword)
+		}
+
 		adminmanagement := router.Group("/admins")
 		{
 			adminmanagement.GET("/userdetails", authHandler.GetUser)
 			adminmanagement.PATCH("/block", authHandler.BlockUser)
 			adminmanagement.PATCH("/unblock", authHandler.UnBlockUser)
 
-		}
-	}
-
-	router.Use(middleware.UserAuthMiddleware)
-	{
-		usermanagement := router.Group("/users")
-		{
-			usermanagement.POST("/profile", authHandler.UserUpdateProfile)
 		}
 	}
 

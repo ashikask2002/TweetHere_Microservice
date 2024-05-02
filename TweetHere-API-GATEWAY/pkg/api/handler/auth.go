@@ -112,6 +112,7 @@ func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 
 	idstring, _ := c.Get("id")
 	id, _ := idstring.(int)
+
 	fmt.Println("iddddddddddddddddddd is ", id)
 
 	if err := c.ShouldBindJSON(&userdetails); err != nil {
@@ -178,27 +179,28 @@ func (ad *AuthHandler) UnBlockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
-func(ad *AuthHandler)ChangePassword(c *gin.Context){
-	idstring,_ := c.Get("id")
-	id,_ := idstring.(int)
+func (ad *AuthHandler) ChangePassword(c *gin.Context) {
+	idstring, _ := c.Get("id")
+
+	id, _ := idstring.(int)
 
 	var ChangePassword models.ChangePassword
 
-	if err := c.BindJSON(&ChangePassword); err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"details are not in right format",nil,err.Error())
-		c.JSON(http.StatusBadRequest,errs)
+	if err := c.BindJSON(&ChangePassword); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "details are not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	fmt.Println("changed passwords details are", ChangePassword)
+	fmt.Println("id for changepasword is ", id)
+
+	if err := ad.GRPC_Client.ChangePassword(id, ChangePassword.Oldpassword, ChangePassword.NewPassword, ChangePassword.RePassword); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error in changepassword", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 
-	if err:= ad.GRPC_Client.ChangePassword(id,ChangePassword.Oldpassword,ChangePassword.NewPassword,ChangePassword.RePassword); err != nil{
-		errs := response.ClientResponse(http.StatusBadRequest,"error in changepassword",nil,err.Error())
-		c.JSON(http.StatusBadRequest,errs)
-		return
-	}
-
-	succesres := response.ClientResponse(http.StatusOK,"successfully changed the password",nil,nil)
-	c.JSON(http.StatusOK,succesres)
+	succesres := response.ClientResponse(http.StatusOK, "successfully changed the password of you", nil, nil)
+	c.JSON(http.StatusOK, succesres)
 
 }
-
-
