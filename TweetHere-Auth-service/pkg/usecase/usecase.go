@@ -148,8 +148,6 @@ func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, erro
 	if err != nil {
 		return &domain.TokenUser{}, errors.New("error in genereate toeknuser")
 	}
-	fmt.Println("osssssssssssssss", userdetails)
-	fmt.Println("userrrrrrrr", userdetailsresponse)
 	return &domain.TokenUser{
 		User:         userdetailsresponse,
 		AccesToken:   accessToken,
@@ -158,7 +156,7 @@ func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, erro
 }
 
 func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (models.UserProfileResponse, error) {
-	fmt.Println("userdetaillllllll at usecase ", user, id)
+	fmt.Println("userrnnnnnssss", id)
 
 	userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
 
@@ -213,11 +211,12 @@ func (ad *authUseCase) UnBlockUser(id string) error {
 }
 
 func (ad *authUseCase) ChangePassword(id int, old string, new string, re string) error {
+	fmt.Println("newpassword", new)
+	fmt.Println("repassword", re)
 	userpassword, err := ad.authRepository.GetPassword(id)
 	if err != nil {
 		return errors.New("internal error")
 	}
-
 	err = helper.CompareHashAndPassword(userpassword, old)
 	if err != nil {
 		return errors.New("old password incorrect")

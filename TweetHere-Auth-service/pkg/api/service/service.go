@@ -146,6 +146,7 @@ func (ad *AuthServer) UserUpdateProfile(ctx context.Context, user *pb.UserUpdate
 		Bio:         user.Update.Bio,
 	}
 	id := user.Id
+	fmt.Println("id isssssss", id)
 
 	data, err := ad.authUseCase.UserUpdateProfile(userdetails, int(id))
 	if err != nil {
@@ -231,18 +232,14 @@ func (ad *AuthServer) UnBlockUser(ctx context.Context, req *pb.UnBlockUserReques
 	}, nil
 }
 
-
-func (ad *AuthServer) ChangePassword(ctx context.Context,req *pb.ChangePasswordRequest)(*pb.ChangePasswordResponse,error){
-	err := ad.authUseCase.ChangePassword(int(req.Id),req.Oldpassword,req.Newpassword,req.Repassword)
-	if err != nil{
+func (ad *AuthServer) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (*pb.ChangePasswordResponse, error) {
+	err := ad.authUseCase.ChangePassword(int(req.Id), req.Oldpassword, req.Newpassword, req.Repassword)
+	if err != nil {
 		return &pb.ChangePasswordResponse{
 			Error: err.Error(),
-		},nil
+		}, nil
 	}
 
-	return &pb.ChangePasswordResponse{
-		
-	},nil
-
+	return &pb.ChangePasswordResponse{}, nil
 
 }

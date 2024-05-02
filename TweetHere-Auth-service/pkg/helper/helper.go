@@ -55,23 +55,7 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 	return tokenString, nil
 }
 
-func ValidateToken(tokenString string) (*authCustomClaimsAdmin, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &authCustomClaimsAdmin{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte("123456789"), nil
-	})
 
-	if err != nil {
-		return nil, err
-	}
-
-	if claims, ok := token.Claims.(*authCustomClaimsAdmin); ok && token.Valid {
-		return claims, nil
-	}
-	return nil, fmt.Errorf("invalid token")
-}
 
 func GenerateTokenUser(user models.UserDetailsResponse) (string, string, error) {
 

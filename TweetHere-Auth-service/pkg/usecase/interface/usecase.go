@@ -18,6 +18,7 @@ type AdminUseCase interface{
      
 	UserUpdateProfile(user models.UserProfile,id int)(models.UserProfileResponse,error)
 	ChangePassword(id int,old string,new string,re string)error
+	
    
 
 
