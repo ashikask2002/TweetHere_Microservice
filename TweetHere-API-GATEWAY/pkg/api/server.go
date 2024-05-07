@@ -21,6 +21,8 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 
 	router.POST("/user/signup", authHandler.UserSignUp)
 	router.POST("/user/login", authHandler.UserLogin)
+	router.POST("/user/otplogin", authHandler.UserOTPLogin)
+	router.POST("/user/otpverify", authHandler.VerifyOTP)
 
 	router.Use(middleware.AuthMiddleware)
 	{
@@ -29,6 +31,13 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 		{
 			usermanagement.POST("/profile", authHandler.UserUpdateProfile)
 			usermanagement.PATCH("/changepassword", authHandler.ChangePassword)
+			usermanagement.GET("/getyoudetails", authHandler.GetUserDetails)
+			usermanagement.POST("/followreq", authHandler.FollowReq)
+			usermanagement.POST("/acceptfollowreq", authHandler.AcceptFollowreq)
+			usermanagement.POST("unfollow", authHandler.Unfollow)
+			usermanagement.GET("/followers", authHandler.Followers)
+			usermanagement.GET("/followings", authHandler.Followings)
+
 		}
 
 		adminmanagement := router.Group("/admins")

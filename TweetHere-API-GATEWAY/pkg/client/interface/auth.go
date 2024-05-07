@@ -14,6 +14,14 @@ type AdminClient interface {
 	UserSignup(userdetails models.UserSignup) (models.TokenUser,error)
 	UserLogin(userdetails models.UserLogin) (models.TokenUser,error)
 	UserUpdateProfile(userdetails models.UserProfile,id int) (models.UserProfileResponse,error)
-	ChangePassword(id int,old string,new string,re string)error
+	ChangePassword(id int,passworddetails models.ChangePassword)error
+	GetUserDetails(id int)( []models.UserDetails4user,error)
+	UserOTPLogin(email string) (string, error)
+	OtpVerification(email, otp string) (bool, error)
+	FollowReq(id int,userid int)error
+	AcceptFollowreq(id int,userid int)error
+	Unfollow(id int,userid int)error
+	Followers(id int)([]models.Followersresponse,error)
+	Followings(id int)([]models.Followersresponse,error)
 
 }

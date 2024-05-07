@@ -212,16 +212,145 @@ func (ad *authClient) GetUser(page int) ([]models.UserDetails, error) {
 
 	return userdetails, nil
 }
+func (ad *authClient) GetUserDetails(id int) ([]models.UserDetails4user, error) {
+	res, err := ad.Client.GetUserDetails(context.Background(), &pb.GetUserDetailsRequest{
+		Id: uint64(id),
+	})
+	if err != nil{
+		return []models.UserDetails4user{}, errors.New("error in getiing userdetails")
+	}
+	var userdetails  []models.UserDetails4user
 
-func (ad *authClient) ChangePassword(id int, old string, new string, re string) error {
+	for _,ud := range res.Userdetails{
+		userdetails = append(userdetails, models.UserDetails4user{
+			ID: uint(ud.Id),
+			Firstname: ud.Firstname,
+			Lastname: ud.Lastname,
+			Username: ud.Username,
+			Phone: ud.Phone,
+			Email: ud.Email,
+			DateOfBirth: ud.DateOfBirth,
+			Profile: ud.Profile,
+			Bio: ud.Bio,
+		})
+	}
+	return userdetails,nil
+	
+}
+
+func (ad *authClient) ChangePassword(id int, passworddetails models.ChangePassword) error {
 	_, err := ad.Client.ChangePassword(context.Background(), &pb.ChangePasswordRequest{
 		Id:          int64(id),
-		Oldpassword: old,
-		Newpassword: new,
-		Repassword:  re,
+		Oldpassword: passworddetails.Oldpassword,
+		Newpassword: passworddetails.NewPassword,
+		Repassword:  passworddetails.RePassword,
 	})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+
+func (uc *authClient) UserOTPLogin(email string) (string, error) {
+	resp, err := uc.Client.UserOTPLogin(context.Background(), &pb.UserOTPLoginRequest{
+		Email: email,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if resp.Status != 200 {
+		return "", errors.New(resp.Error)
+	}
+
+	return resp.Otp, nil
+}
+
+
+func (uc *authClient) OtpVerification(email, otp string) (bool, error) {
+	resp, err := uc.Client.OtpVerification(context.Background(), &pb.OtpVerificationRequest{
+		Email: email,
+		Otp:   otp,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	if resp.Status != 200 {
+		return false, errors.New(resp.Error)
+	}
+
+	return true, nil
+}
+
+func(ad *authClient) FollowReq(id int,userid int)error{
+	_,err := ad.Client.FollowReq(context.Background(),&pb.FollowReqRequest{
+		UserID: int64(id),
+		FollowingUser: int64(userid),
+	})
+	if err != nil{
+		return  errors.New("error in followrequest ")
+	}
+	return nil
+}
+
+func(ad *authClient) AcceptFollowreq(id int,userid int)error{
+	_,err := ad.Client.AcceptFollowReq(context.Background(),&pb.AcceptFollowReqRequest{
+		UserID: int64(id),
+		FollowingUser: int64(userid),
+	})
+	if err != nil{
+		return errors.New("error in accepting follower")
+	}
+	return nil
+}
+
+func (ad *authClient) Unfollow(id int,userid int)error{
+	_,err := ad.Client.Unfollow(context.Background(),&pb.UnfollowRequest{
+		UserID: int64(id),
+		FollowingUser: int64(userid),
+	})
+
+	if err != nil{
+		return errors.New("error in unfollow the follower")
+	}
+	return nil
+}
+
+func (ad *authClient) Followers(id int)([]models.Followersresponse,error){
+	res,err := ad.Client.Followers(context.Background(),&pb.FollowersRequest{
+		UserID: int64(id),
+	})
+	if err != nil{
+		return []models.Followersresponse{},err
+	}
+	var userdetails []models.Followersresponse
+
+	for _,ud := range res.Users{
+		userdetails = append(userdetails,models.Followersresponse{
+            Username: ud.Username,
+			Profile: ud.UserProfile,
+		})
+	}
+	return userdetails,nil
+}
+
+func (ad *authClient) Followings(id int)([]models.Followersresponse,error){
+	res,err := ad.Client.Followings(context.Background(),&pb.FollowingRequest{
+		UserID: int64(id),
+	})
+	if err != nil{
+		return []models.Followersresponse{},err
+	}
+
+	var userdetails []models.Followersresponse
+
+	for _,ud := range res.Users{
+		userdetails = append(userdetails,models.Followersresponse{
+            Username: ud.Username,
+			Profile: ud.UserProfile,
+		})
+	}
+	return userdetails,nil
 }

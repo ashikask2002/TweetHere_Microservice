@@ -194,7 +194,7 @@ func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 	fmt.Println("changed passwords details are", ChangePassword)
 	fmt.Println("id for changepasword is ", id)
 
-	if err := ad.GRPC_Client.ChangePassword(id, ChangePassword.Oldpassword, ChangePassword.NewPassword, ChangePassword.RePassword); err != nil {
+	if err := ad.GRPC_Client.ChangePassword(id, ChangePassword); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "error in changepassword", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
@@ -203,4 +203,136 @@ func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 	succesres := response.ClientResponse(http.StatusOK, "successfully changed the password of you", nil, nil)
 	c.JSON(http.StatusOK, succesres)
 
+}
+
+func (ad *AuthHandler) GetUserDetails(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id, _ := id_string.(int)
+
+	userdetails, err := ad.GRPC_Client.GetUserDetails(id)
+	if err != nil {
+		errorres := response.ClientResponse(http.StatusBadRequest, "failed to get the userdetails", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorres)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "Successfully got the details of you", userdetails, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func (uh *AuthHandler) UserOTPLogin(c *gin.Context) {
+	var userDetails models.UserOTPLogin
+	if err := c.ShouldBindJSON(&userDetails); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+
+	otp, err := uh.GRPC_Client.UserOTPLogin(userDetails.Email)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to generate OTP", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+
+	success := response.ClientResponse(http.StatusOK, "OTP generated successfully", map[string]string{"OTP": otp}, nil)
+	c.JSON(http.StatusOK, success)
+}
+
+func (ot *AuthHandler) VerifyOTP(c *gin.Context) {
+	var code models.OtpVerification
+	if err := c.BindJSON(&code); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	verified, err := ot.GRPC_Client.OtpVerification(code.Email, code.Otp)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not verify OTP", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully verified OTP", verified, nil)
+	c.JSON(http.StatusOK, successRes)
+}
+
+func (ad *AuthHandler) FollowReq(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	userId := c.Query("id")
+	userID, _ := strconv.Atoi(userId)
+
+	err := ad.GRPC_Client.FollowReq(id, userID)
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "could not send the request", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "successfully send the requset ", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func (ad *AuthHandler) AcceptFollowreq(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	userId := c.Query("id")
+	userID, _ := strconv.Atoi(userId)
+	err := ad.GRPC_Client.AcceptFollowreq(id, userID)
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "accepting the request is failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "succesfully accepted the request", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func (ad *AuthHandler) Unfollow(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	useId := c.Query("id")
+	userID, _ := strconv.Atoi(useId)
+
+	err := ad.GRPC_Client.Unfollow(id, userID)
+
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "unfollowing is failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+		return
+
+	}
+	succesres := response.ClientResponse(http.StatusOK, "successfully unfollowed the follower", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+}
+
+func (ad *AuthHandler) Followers(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	details, err := ad.GRPC_Client.Followers(id)
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "get the followers failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+		return
+	}
+	successres := response.ClientResponse(http.StatusOK, "successfully got followers", details, nil)
+	c.JSON(http.StatusOK, successres)
+}
+
+func (ad *AuthHandler) Followings(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	details, err := ad.GRPC_Client.Followings(id)
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "get the followings failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+		return
+	}
+	successres := response.ClientResponse(http.StatusOK, "successfully got followings", details, nil)
+	c.JSON(http.StatusOK, successres)
 }
