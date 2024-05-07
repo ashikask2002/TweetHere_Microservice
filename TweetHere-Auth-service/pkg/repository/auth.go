@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -115,7 +116,6 @@ func (ad *authRepository) UserUpdateProfile(user models.UserProfile, id int) (mo
 	return userdetails, nil
 }
 
-
 func (ad *authRepository) UpdateBlockUserByID(user domain.User) error {
 	err := ad.DB.Exec("update users set is_blocked = ? where id = ?", user.IsBlocked, user.ID).Error
 	if err != nil {
@@ -125,22 +125,22 @@ func (ad *authRepository) UpdateBlockUserByID(user domain.User) error {
 }
 
 func (ad *authRepository) GetUser(page int) ([]models.UserDetails, error) {
-    if page == 0 {
-        page = 1
-    }
-    offset := (page - 1) * 20
-    var userDetails []models.UserDetails
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * 20
+	var userDetails []models.UserDetails
 
-    query := `
+	query := `
         SELECT id, firstname, lastname, username, phone, email, date_of_birth, is_blocked, profile, bio
         FROM users
         LIMIT ? OFFSET ?
     `
-    if err := ad.DB.Raw(query, 20, offset).Scan(&userDetails).Error; err != nil {
-        return []models.UserDetails{}, err
-    }
+	if err := ad.DB.Raw(query, 20, offset).Scan(&userDetails).Error; err != nil {
+		return []models.UserDetails{}, err
+	}
 
-    return userDetails, nil
+	return userDetails, nil
 }
 
 func (ad *authRepository) GetUserById(id string) (domain.User, error) {
@@ -169,18 +169,161 @@ func (ad *authRepository) GetUserById(id string) (domain.User, error) {
 }
 
 func (ad *authRepository) GetPassword(id int) (string, error) {
+	fmt.Println("am in repo change get password")
 	var userPassword string
 	err := ad.DB.Raw("select password from users where id = ?", id).Scan(&userPassword).Error
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("njaan thanne", id, userPassword)
 	return userPassword, nil
 }
 
 func (c *authRepository) ChangePassword(id int, password string) error {
+	fmt.Println("i am in repository")
 	err := c.DB.Exec("UPDATE users SET password = $1 WHERE id = $2", password, id).Error
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c *authRepository) GetUserDetails(id int) ([]models.UserDetails4user, error) {
+	var userDetails []models.UserDetails4user
+
+	// Execute query to fetch user details
+	if err := c.DB.Table("users").Select("id, firstname, lastname, username, phone, email, date_of_birth, profile, bio").Where("id = ?", id).Find(&userDetails).Error; err != nil {
+		return nil, err
+	}
+
+	return userDetails, nil
+}
+
+func (ur *authRepository) DeleteRecentOtpRequestsBefore5min() error {
+	query := "DELETE FROM user_otp_logins WHERE expiration < CURRENT_TIMESTAMP - INTERVAL '5 minutes';"
+	err := ur.DB.Exec(query).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) TemporarySavingUserOtp(otp int, userEmail string, expiration time.Time) error {
+
+	query := `INSERT INTO user_otp_logins (email, otp, expiration) VALUES ($1, $2, $3)`
+	err := ur.DB.Exec(query, userEmail, otp, expiration).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) VerifyOTP(email, otp string) (bool, error) {
+	query := "SELECT COUNT(*) FROM user_otp_logins WHERE email = ? AND otp = ? AND expiration > CURRENT_TIMESTAMP;"
+	var count int64
+	if err := ur.DB.Raw(query, email, otp).Scan(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (ad *authRepository) CheckUserAvailability(userid int) bool {
+	var count int
+	if err := ad.DB.Raw("SELECT COUNT(*) FROM users WHERE id=?", userid).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+
+func (ad *authRepository) ExistFollowreq(userid, followingUserID int) bool {
+	var count int
+	err := ad.DB.Raw("SELECT COUNT(*) FROM following_requests WHERE following_user= ? AND user_id = ? ", userid, followingUserID).Scan(&count).Error
+	if err != nil {
+		return false
+	}
+	return count > 0
+}
+
+func (ad *authRepository) FollowReq(userid int, followinguserid int) error {
+	err := ad.DB.Exec("INSERT INTO following_requests (user_id,following_user,created_at)VALUES(?,?,NOW())", userid, followinguserid).Error
+	if err != nil {
+		return err
+	}
+	err = ad.DB.Exec("INSERT INTO followings (user_id,following_user,created_at)VALUES(?,?,NOW())", userid, followinguserid).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ad *authRepository) CheckRequest(userid int, followinguserid int) bool {
+	var request models.FollowingRequest
+	err := ad.DB.Raw("SELECT following_user, user_id FROM following_requests WHERE following_user = ? AND user_id = ?", userid, followinguserid).Scan(&request).Error
+	if err != nil {
+		return false
+	}
+	return request.UserID != 0
+}
+
+func (ad *authRepository) AlreadyAccepted(userid int, followinguserid int) bool {
+	var count int
+	err := ad.DB.Raw("SELECT COUNT(*) FROM followers WHERE user_id = ? AND following_user = ?", userid, followinguserid).Scan(&count).Error
+	if err != nil {
+		return false
+	}
+	return count > 0
+}
+
+func (ur *authRepository) AcceptFollowREQ(userID, FollowingUserID int) error {
+	err := ur.DB.Exec("INSERT INTO followers (user_id,following_user,created_at) VALUES(?,?,NOW())", userID, FollowingUserID).Error
+	if err != nil {
+		return err
+	}
+
+	err = ur.DB.Exec("DELETE FROM following_requests WHERE user_id = ? AND following_user = ?", FollowingUserID, userID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ur *authRepository) UnFollow(userID, UnFollowUserID int) error {
+	err := ur.DB.Exec("DELETE FROM followings WHERE user_id = ? AND following_user = ?", userID, UnFollowUserID).Error
+	if err != nil {
+		return err
+	}
+	errs := ur.DB.Exec("DELETE FROM followers WHERE user_id = ? AND following_user = ?", UnFollowUserID, userID).Error
+	if errs != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) Followers(userID int) ([]models.FollowResp, error) {
+	var response []models.FollowResp
+	err := ur.DB.Raw("SELECT following_user FROM followers WHERE user_id = ?", userID).Scan(&response).Error
+	if err != nil {
+		return []models.FollowResp{}, err
+	}
+	return response, nil
+}
+
+func (ur *authRepository) Followdetails(userid int) (models.Followersresponse, error) {
+	var response models.Followersresponse
+	err := ur.DB.Raw("SELECT username,profile FROM users WHERE id = ?", userid).Scan(&response).Error
+	if err != nil {
+		return models.Followersresponse{}, err
+	}
+	return response, nil
+}
+
+func (ur *authRepository) Followings(userID int) ([]models.FollowResp, error) {
+	var response []models.FollowResp
+	err := ur.DB.Raw("SELECT following_user FROM followings WHERE user_id = ?", userID).Scan(&response).Error
+	if err != nil {
+		return []models.FollowResp{}, err
+	}
+	return response, nil
 }

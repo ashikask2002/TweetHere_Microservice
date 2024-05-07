@@ -85,3 +85,28 @@ type ChangePassword struct {
 	NewPassword string `json:"new_password"`
 	RePassword  string `json:"re_password"`
 }
+
+type UserDetails4user struct {
+	ID          uint   `json:"id"`
+	Firstname   string `json:"firstname"`
+	Lastname    string `json:"lastname"`
+	Username    string `json:"username"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
+	Profile     string `json:"profile"`
+	Bio         string `json:"bio"`
+}
+
+type FollowingRequest struct {
+	FollowingUser int `json:"following_user"`
+	UserID        int `json:"user_id"`
+}
+type Followersresponse struct {
+	Username string `json:"username"`
+	Profile  string `json:"profile"`
+}
+
+type FollowResp struct {
+	FollowingUser int `json:"following_user"`
+}

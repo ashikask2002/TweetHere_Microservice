@@ -55,8 +55,6 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 	return tokenString, nil
 }
 
-
-
 func GenerateTokenUser(user models.UserDetailsResponse) (string, string, error) {
 
 	accessTokenclaims := &authCustomClaimsUser{
@@ -99,9 +97,13 @@ func GenerateTokenUser(user models.UserDetailsResponse) (string, string, error) 
 }
 
 func CompareHashAndPassword(a string, b string) error {
+	fmt.Println("aaaa is ", a)
+	fmt.Println("bbb is", b)
 	err := bcrypt.CompareHashAndPassword([]byte(a), []byte(b))
 	if err != nil {
+		fmt.Println("ncncn", err)
 		return err
 	}
+	fmt.Println("erorr is ", err)
 	return nil
 }

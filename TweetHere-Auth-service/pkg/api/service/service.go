@@ -233,7 +233,13 @@ func (ad *AuthServer) UnBlockUser(ctx context.Context, req *pb.UnBlockUserReques
 }
 
 func (ad *AuthServer) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (*pb.ChangePasswordResponse, error) {
-	err := ad.authUseCase.ChangePassword(int(req.Id), req.Oldpassword, req.Newpassword, req.Repassword)
+	UserID := req.Id
+	passworddetails := models.ChangePassword{
+		Oldpassword: req.Oldpassword,
+		NewPassword: req.Newpassword,
+		RePassword:  req.Repassword,
+	}
+	err := ad.authUseCase.ChangePassword(int(UserID), passworddetails)
 	if err != nil {
 		return &pb.ChangePasswordResponse{
 			Error: err.Error(),
@@ -242,4 +248,135 @@ func (ad *AuthServer) ChangePassword(ctx context.Context, req *pb.ChangePassword
 
 	return &pb.ChangePasswordResponse{}, nil
 
+}
+
+func (ad *AuthServer) GetUserDetails(ctx context.Context, req *pb.GetUserDetailsRequest) (*pb.GetUserDetailsResponse, error) {
+	id := req.Id
+
+	users, err := ad.authUseCase.GetUserDetails(int(id))
+	if err != nil {
+		return &pb.GetUserDetailsResponse{}, err
+	}
+	var userdetails []*pb.GetUserDetailsforUser
+
+	for _, user := range users {
+		userdetails = append(userdetails, &pb.GetUserDetailsforUser{
+			Id:          int64(user.ID),
+			Firstname:   user.Firstname,
+			Lastname:    user.Lastname,
+			Username:    user.Username,
+			Phone:       user.Phone,
+			Email:       user.Email,
+			DateOfBirth: user.DateOfBirth,
+			Profile:     user.Profile,
+			Bio:         user.Bio,
+		})
+	}
+	return &pb.GetUserDetailsResponse{
+		Userdetails: userdetails,
+		Error:       "nil",
+	}, nil
+
+}
+
+func (us *AuthServer) UserOTPLogin(ctx context.Context, req *pb.UserOTPLoginRequest) (*pb.UserOTPLoginResponse, error) {
+	otp, err := us.authUseCase.UserOTPLogin(req.Email)
+	if err != nil {
+		return &pb.UserOTPLoginResponse{
+			Status: 400,
+			Error:  err.Error(),
+		}, nil
+	}
+
+	return &pb.UserOTPLoginResponse{
+		Status: 200,
+		Otp:    otp,
+	}, nil
+}
+
+func (us *AuthServer) OtpVerification(ctx context.Context, req *pb.OtpVerificationRequest) (*pb.OtpVerificationResponse, error) {
+	verified, err := us.authUseCase.OtpVerification(req.Email, req.Otp)
+	if err != nil {
+		return &pb.OtpVerificationResponse{
+			Status: 400,
+			Error:  err.Error(),
+		}, nil
+	}
+
+	return &pb.OtpVerificationResponse{
+		Status:   200,
+		Verified: verified,
+	}, nil
+}
+
+func (ad *AuthServer) FollowReq(ctx context.Context, req *pb.FollowReqRequest) (*pb.FollowReqResponse, error) {
+	id, userId := req.UserID, req.FollowingUser
+
+	err := ad.authUseCase.FollowReq(int(id), int(userId))
+	if err != nil {
+		return &pb.FollowReqResponse{}, err
+	}
+	return &pb.FollowReqResponse{}, nil
+
+}
+
+func (ad *AuthServer) AcceptFollowReq(ctx context.Context, req *pb.AcceptFollowReqRequest) (*pb.AcceptFollowReqResponse, error) {
+	id, userID := req.UserID, req.FollowingUser
+
+	err := ad.authUseCase.AcceptFollowReq(int(id), int(userID))
+	if err != nil {
+		return &pb.AcceptFollowReqResponse{}, err
+	}
+	return &pb.AcceptFollowReqResponse{}, nil
+}
+
+func (ad *AuthServer) Unfollow(ctx context.Context, req *pb.UnfollowRequest) (*pb.UnfollowResponse, error) {
+	id, UserID := req.UserID, req.FollowingUser
+
+	err := ad.authUseCase.Unfollow(int(id), int(UserID))
+	if err != nil {
+		return &pb.UnfollowResponse{}, err
+	}
+	return &pb.UnfollowResponse{}, nil
+}
+
+func (ad *AuthServer) Followers(ctx context.Context, req *pb.FollowersRequest) (*pb.FollowersResponse, error) {
+	id := req.UserID
+
+	details, err := ad.authUseCase.Followers(int(id))
+	if err != nil {
+		return &pb.FollowersResponse{}, err
+	}
+	var userdetails []*pb.FollowResponse
+
+	for _, user := range details {
+		userdetails = append(userdetails, &pb.FollowResponse{
+			Username:    user.Username,
+			UserProfile: user.Profile,
+		})
+	}
+	return &pb.FollowersResponse{
+		Users: userdetails,
+	}, nil
+
+}
+
+func (ad *AuthServer) Followings(ctx context.Context, req *pb.FollowingRequest) (*pb.FollowingResponse, error) {
+	id := req.UserID
+
+	details, err := ad.authUseCase.Followings(int(id))
+	if err != nil {
+		return &pb.FollowingResponse{}, err
+	}
+	var userdetails []*pb.FollowResponse
+
+	for _, user := range details {
+		userdetails = append(userdetails, &pb.FollowResponse{
+			Username:    user.Username,
+			UserProfile: user.Profile,
+		})
+	}
+	return &pb.FollowingResponse{
+		Users: userdetails,
+	}, nil
 }

@@ -17,6 +17,10 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 
 	db.AutoMigrate(&domain.Admin{})
 	db.AutoMigrate(&domain.User{})
+	db.AutoMigrate(&domain.UserOTPLogin{})
+	db.AutoMigrate(&domain.FollowingRequest{})
+	db.AutoMigrate(&domain.Followings{})
+	db.AutoMigrate(&domain.Followers{})
 	return db, dbErr
 
 }

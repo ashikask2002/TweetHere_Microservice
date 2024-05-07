@@ -28,6 +28,14 @@ const (
 	AuthService_UserLogin_FullMethodName         = "/admin.AuthService/UserLogin"
 	AuthService_UserUpdateProfile_FullMethodName = "/admin.AuthService/UserUpdateProfile"
 	AuthService_ChangePassword_FullMethodName    = "/admin.AuthService/ChangePassword"
+	AuthService_GetUserDetails_FullMethodName    = "/admin.AuthService/GetUserDetails"
+	AuthService_UserOTPLogin_FullMethodName      = "/admin.AuthService/UserOTPLogin"
+	AuthService_OtpVerification_FullMethodName   = "/admin.AuthService/OtpVerification"
+	AuthService_FollowReq_FullMethodName         = "/admin.AuthService/FollowReq"
+	AuthService_AcceptFollowReq_FullMethodName   = "/admin.AuthService/AcceptFollowReq"
+	AuthService_Unfollow_FullMethodName          = "/admin.AuthService/Unfollow"
+	AuthService_Followers_FullMethodName         = "/admin.AuthService/Followers"
+	AuthService_Followings_FullMethodName        = "/admin.AuthService/Followings"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -43,6 +51,14 @@ type AuthServiceClient interface {
 	UserLogin(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	UserUpdateProfile(ctx context.Context, in *UserUpdateProfileRequest, opts ...grpc.CallOption) (*UserUpdateProfileResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error)
+	UserOTPLogin(ctx context.Context, in *UserOTPLoginRequest, opts ...grpc.CallOption) (*UserOTPLoginResponse, error)
+	OtpVerification(ctx context.Context, in *OtpVerificationRequest, opts ...grpc.CallOption) (*OtpVerificationResponse, error)
+	FollowReq(ctx context.Context, in *FollowReqRequest, opts ...grpc.CallOption) (*FollowReqResponse, error)
+	AcceptFollowReq(ctx context.Context, in *AcceptFollowReqRequest, opts ...grpc.CallOption) (*AcceptFollowReqResponse, error)
+	Unfollow(ctx context.Context, in *UnfollowRequest, opts ...grpc.CallOption) (*UnfollowResponse, error)
+	Followers(ctx context.Context, in *FollowersRequest, opts ...grpc.CallOption) (*FollowersResponse, error)
+	Followings(ctx context.Context, in *FollowingRequest, opts ...grpc.CallOption) (*FollowingResponse, error)
 }
 
 type authServiceClient struct {
@@ -134,6 +150,78 @@ func (c *authServiceClient) ChangePassword(ctx context.Context, in *ChangePasswo
 	return out, nil
 }
 
+func (c *authServiceClient) GetUserDetails(ctx context.Context, in *GetUserDetailsRequest, opts ...grpc.CallOption) (*GetUserDetailsResponse, error) {
+	out := new(GetUserDetailsResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetUserDetails_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) UserOTPLogin(ctx context.Context, in *UserOTPLoginRequest, opts ...grpc.CallOption) (*UserOTPLoginResponse, error) {
+	out := new(UserOTPLoginResponse)
+	err := c.cc.Invoke(ctx, AuthService_UserOTPLogin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) OtpVerification(ctx context.Context, in *OtpVerificationRequest, opts ...grpc.CallOption) (*OtpVerificationResponse, error) {
+	out := new(OtpVerificationResponse)
+	err := c.cc.Invoke(ctx, AuthService_OtpVerification_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) FollowReq(ctx context.Context, in *FollowReqRequest, opts ...grpc.CallOption) (*FollowReqResponse, error) {
+	out := new(FollowReqResponse)
+	err := c.cc.Invoke(ctx, AuthService_FollowReq_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) AcceptFollowReq(ctx context.Context, in *AcceptFollowReqRequest, opts ...grpc.CallOption) (*AcceptFollowReqResponse, error) {
+	out := new(AcceptFollowReqResponse)
+	err := c.cc.Invoke(ctx, AuthService_AcceptFollowReq_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) Unfollow(ctx context.Context, in *UnfollowRequest, opts ...grpc.CallOption) (*UnfollowResponse, error) {
+	out := new(UnfollowResponse)
+	err := c.cc.Invoke(ctx, AuthService_Unfollow_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) Followers(ctx context.Context, in *FollowersRequest, opts ...grpc.CallOption) (*FollowersResponse, error) {
+	out := new(FollowersResponse)
+	err := c.cc.Invoke(ctx, AuthService_Followers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) Followings(ctx context.Context, in *FollowingRequest, opts ...grpc.CallOption) (*FollowingResponse, error) {
+	out := new(FollowingResponse)
+	err := c.cc.Invoke(ctx, AuthService_Followings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -147,6 +235,14 @@ type AuthServiceServer interface {
 	UserLogin(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
 	UserUpdateProfile(context.Context, *UserUpdateProfileRequest) (*UserUpdateProfileResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error)
+	UserOTPLogin(context.Context, *UserOTPLoginRequest) (*UserOTPLoginResponse, error)
+	OtpVerification(context.Context, *OtpVerificationRequest) (*OtpVerificationResponse, error)
+	FollowReq(context.Context, *FollowReqRequest) (*FollowReqResponse, error)
+	AcceptFollowReq(context.Context, *AcceptFollowReqRequest) (*AcceptFollowReqResponse, error)
+	Unfollow(context.Context, *UnfollowRequest) (*UnfollowResponse, error)
+	Followers(context.Context, *FollowersRequest) (*FollowersResponse, error)
+	Followings(context.Context, *FollowingRequest) (*FollowingResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -180,6 +276,30 @@ func (UnimplementedAuthServiceServer) UserUpdateProfile(context.Context, *UserUp
 }
 func (UnimplementedAuthServiceServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedAuthServiceServer) GetUserDetails(context.Context, *GetUserDetailsRequest) (*GetUserDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserDetails not implemented")
+}
+func (UnimplementedAuthServiceServer) UserOTPLogin(context.Context, *UserOTPLoginRequest) (*UserOTPLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserOTPLogin not implemented")
+}
+func (UnimplementedAuthServiceServer) OtpVerification(context.Context, *OtpVerificationRequest) (*OtpVerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OtpVerification not implemented")
+}
+func (UnimplementedAuthServiceServer) FollowReq(context.Context, *FollowReqRequest) (*FollowReqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowReq not implemented")
+}
+func (UnimplementedAuthServiceServer) AcceptFollowReq(context.Context, *AcceptFollowReqRequest) (*AcceptFollowReqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptFollowReq not implemented")
+}
+func (UnimplementedAuthServiceServer) Unfollow(context.Context, *UnfollowRequest) (*UnfollowResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unfollow not implemented")
+}
+func (UnimplementedAuthServiceServer) Followers(context.Context, *FollowersRequest) (*FollowersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Followers not implemented")
+}
+func (UnimplementedAuthServiceServer) Followings(context.Context, *FollowingRequest) (*FollowingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Followings not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -356,6 +476,150 @@ func _AuthService_ChangePassword_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetUserDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserDetailsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetUserDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetUserDetails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetUserDetails(ctx, req.(*GetUserDetailsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_UserOTPLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserOTPLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UserOTPLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UserOTPLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UserOTPLogin(ctx, req.(*UserOTPLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_OtpVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OtpVerificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).OtpVerification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_OtpVerification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).OtpVerification(ctx, req.(*OtpVerificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_FollowReq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowReqRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).FollowReq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_FollowReq_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).FollowReq(ctx, req.(*FollowReqRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_AcceptFollowReq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptFollowReqRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).AcceptFollowReq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_AcceptFollowReq_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).AcceptFollowReq(ctx, req.(*AcceptFollowReqRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Unfollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnfollowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Unfollow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_Unfollow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Unfollow(ctx, req.(*UnfollowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Followers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Followers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_Followers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Followers(ctx, req.(*FollowersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Followings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Followings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_Followings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Followings(ctx, req.(*FollowingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -398,6 +662,38 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _AuthService_ChangePassword_Handler,
+		},
+		{
+			MethodName: "GetUserDetails",
+			Handler:    _AuthService_GetUserDetails_Handler,
+		},
+		{
+			MethodName: "UserOTPLogin",
+			Handler:    _AuthService_UserOTPLogin_Handler,
+		},
+		{
+			MethodName: "OtpVerification",
+			Handler:    _AuthService_OtpVerification_Handler,
+		},
+		{
+			MethodName: "FollowReq",
+			Handler:    _AuthService_FollowReq_Handler,
+		},
+		{
+			MethodName: "AcceptFollowReq",
+			Handler:    _AuthService_AcceptFollowReq_Handler,
+		},
+		{
+			MethodName: "Unfollow",
+			Handler:    _AuthService_Unfollow_Handler,
+		},
+		{
+			MethodName: "Followers",
+			Handler:    _AuthService_Followers_Handler,
+		},
+		{
+			MethodName: "Followings",
+			Handler:    _AuthService_Followings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

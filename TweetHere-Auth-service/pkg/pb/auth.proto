@@ -16,6 +16,15 @@ service AuthService{
      rpc UserLogin (UserLoginRequest) returns (UserLoginResponse){}
      rpc UserUpdateProfile(UserUpdateProfileRequest) returns(UserUpdateProfileResponse){}
      rpc ChangePassword(ChangePasswordRequest) returns(ChangePasswordResponse){}
+     rpc GetUserDetails(GetUserDetailsRequest) returns(GetUserDetailsResponse){}
+     rpc UserOTPLogin(UserOTPLoginRequest) returns (UserOTPLoginResponse);
+     rpc OtpVerification(OtpVerificationRequest) returns (OtpVerificationResponse);
+     rpc FollowReq(FollowReqRequest)  returns(FollowReqResponse);
+     rpc AcceptFollowReq(AcceptFollowReqRequest) returns(AcceptFollowReqResponse){};
+     rpc Unfollow(UnfollowRequest) returns(UnfollowResponse){};
+     rpc Followers(FollowersRequest) returns(FollowersResponse){};
+     rpc Followings(FollowingRequest) returns(FollowingResponse){};
+    
 
 }
 message AdminSignupRequest{
@@ -165,4 +174,94 @@ message ChangePasswordRequest{
 
 message ChangePasswordResponse{
     string error=1;
+}
+
+message GetUserDetailsRequest{
+    uint64 id=1;
+
+}
+
+message GetUserDetailsforUser{
+    int64 id=1;
+    string firstname=2;
+    string lastname=3;
+    string username=4;
+    string phone=5;
+    string email=6;
+    string date_of_birth=7;
+    bool isblocked=8;
+    string profile=9;
+    string bio=10;
+}
+message GetUserDetailsResponse{
+   repeated GetUserDetailsforUser userdetails=1;
+    string error=2;
+}
+
+message UserOTPLoginRequest {
+    string email = 1; 
+}
+
+message UserOTPLoginResponse {
+    int64 status = 1; 
+    string otp = 2;   
+    string error = 3; 
+}
+
+message OtpVerificationRequest {
+    string email = 1;
+    string otp = 2;
+}
+
+message OtpVerificationResponse {
+    int64 status = 1;
+    bool verified = 2;
+    string error = 3;
+}
+
+message FollowReqRequest{
+    int64 userID=1;
+    int64 followingUser=2;
+}
+
+message FollowReqResponse{
+    
+}
+
+message AcceptFollowReqRequest{
+    int64 userID=1;
+    int64 followingUser=2;
+}
+message AcceptFollowReqResponse{
+
+}
+
+message UnfollowRequest{
+    int64 userID=1;
+    int64 followingUser=2;
+}
+
+message UnfollowResponse{
+    
+}
+
+message FollowersRequest{
+    int64 userID =1;
+}
+
+message FollowResponse {
+    string username = 1;
+    string userProfile = 2;
+}
+
+message FollowersResponse{
+    repeated FollowResponse users = 1;
+}
+
+message FollowingRequest{
+    int64 userID =1;
+}
+
+message FollowingResponse{
+  repeated FollowResponse users =1;
 }
