@@ -329,5 +329,5 @@ func (ad *AuthHandler) VerifyOTP(c *gin.Context) {
 	}
 	successres := response.ClientResponse(http.StatusOK, "successfully verified ", users, nil)
 	c.JSON(http.StatusOK, successres)
-	return
+	
 }
