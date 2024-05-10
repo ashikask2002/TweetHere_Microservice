@@ -3,7 +3,7 @@ package interfaces
 import "TweetHere-API/pkg/utils/models"
 
 type AdminClient interface {
-	AdminSignUp(admindetails models.AdminSignup) (models.TokenAdmin, error)
+	
 	AdminLogin(admindetails models.AdminLogin) (models.TokenAdmin, error)
     BlockUser(id string)error
 	UnBlockUser(id string)error
@@ -23,5 +23,7 @@ type AdminClient interface {
 	Unfollow(id int,userid int)error
 	Followers(id int)([]models.Followersresponse,error)
 	Followings(id int)([]models.Followersresponse,error)
+	SendOTP(phone string)error
+	VerifyOTP(code models.VerifyData)(models.TokenUser,error)
 
 }

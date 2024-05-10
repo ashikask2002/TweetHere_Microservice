@@ -36,6 +36,8 @@ const (
 	AuthService_Unfollow_FullMethodName          = "/admin.AuthService/Unfollow"
 	AuthService_Followers_FullMethodName         = "/admin.AuthService/Followers"
 	AuthService_Followings_FullMethodName        = "/admin.AuthService/Followings"
+	AuthService_SendOTP_FullMethodName           = "/admin.AuthService/SendOTP"
+	AuthService_VerifyOTP_FullMethodName         = "/admin.AuthService/VerifyOTP"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -59,6 +61,8 @@ type AuthServiceClient interface {
 	Unfollow(ctx context.Context, in *UnfollowRequest, opts ...grpc.CallOption) (*UnfollowResponse, error)
 	Followers(ctx context.Context, in *FollowersRequest, opts ...grpc.CallOption) (*FollowersResponse, error)
 	Followings(ctx context.Context, in *FollowingRequest, opts ...grpc.CallOption) (*FollowingResponse, error)
+	SendOTP(ctx context.Context, in *SendOTPRequest, opts ...grpc.CallOption) (*SendOTPResponse, error)
+	VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error)
 }
 
 type authServiceClient struct {
@@ -222,6 +226,24 @@ func (c *authServiceClient) Followings(ctx context.Context, in *FollowingRequest
 	return out, nil
 }
 
+func (c *authServiceClient) SendOTP(ctx context.Context, in *SendOTPRequest, opts ...grpc.CallOption) (*SendOTPResponse, error) {
+	out := new(SendOTPResponse)
+	err := c.cc.Invoke(ctx, AuthService_SendOTP_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error) {
+	out := new(VerifyOTPResponse)
+	err := c.cc.Invoke(ctx, AuthService_VerifyOTP_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -243,6 +265,8 @@ type AuthServiceServer interface {
 	Unfollow(context.Context, *UnfollowRequest) (*UnfollowResponse, error)
 	Followers(context.Context, *FollowersRequest) (*FollowersResponse, error)
 	Followings(context.Context, *FollowingRequest) (*FollowingResponse, error)
+	SendOTP(context.Context, *SendOTPRequest) (*SendOTPResponse, error)
+	VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -300,6 +324,12 @@ func (UnimplementedAuthServiceServer) Followers(context.Context, *FollowersReque
 }
 func (UnimplementedAuthServiceServer) Followings(context.Context, *FollowingRequest) (*FollowingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Followings not implemented")
+}
+func (UnimplementedAuthServiceServer) SendOTP(context.Context, *SendOTPRequest) (*SendOTPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendOTP not implemented")
+}
+func (UnimplementedAuthServiceServer) VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyOTP not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -620,6 +650,42 @@ func _AuthService_Followings_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_SendOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendOTPRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SendOTP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_SendOTP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SendOTP(ctx, req.(*SendOTPRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_VerifyOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyOTPRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).VerifyOTP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_VerifyOTP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).VerifyOTP(ctx, req.(*VerifyOTPRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -694,6 +760,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Followings",
 			Handler:    _AuthService_Followings_Handler,
+		},
+		{
+			MethodName: "SendOTP",
+			Handler:    _AuthService_SendOTP_Handler,
+		},
+		{
+			MethodName: "VerifyOTP",
+			Handler:    _AuthService_VerifyOTP_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

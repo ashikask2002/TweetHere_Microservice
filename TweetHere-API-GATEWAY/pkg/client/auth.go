@@ -30,29 +30,6 @@ func NewAuthClient(cfg config.Config) interfaces.AdminClient {
 	}
 }
 
-func (ad *authClient) AdminSignUp(admindetails models.AdminSignup) (models.TokenAdmin, error) {
-	fmt.Println("ddd", admindetails)
-	admin, err := ad.Client.AdminSignUp(context.Background(), &pb.AdminSignupRequest{
-		Firstname: admindetails.Firstname,
-		Lastname:  admindetails.Lastname,
-		Email:     admindetails.Email,
-		Password:  admindetails.Password,
-	})
-	fmt.Println("error is", err)
-	if err != nil {
-		return models.TokenAdmin{}, err
-	}
-	return models.TokenAdmin{
-		Admin: models.AdminDetailsResponse{
-			ID:        uint(admin.AdminDetails.Id),
-			Firstname: admin.AdminDetails.Firstname,
-			Lastname:  admin.AdminDetails.Lastname,
-			Email:     admin.AdminDetails.Email,
-		},
-		Token: admin.Token,
-	}, nil
-}
-
 func (ad *authClient) AdminLogin(admindetails models.AdminLogin) (models.TokenAdmin, error) {
 	admin, err := ad.Client.AdminLogin(context.Background(), &pb.AdminLoginRequest{
 		Email:    admindetails.Email,
@@ -216,26 +193,26 @@ func (ad *authClient) GetUserDetails(id int) ([]models.UserDetails4user, error) 
 	res, err := ad.Client.GetUserDetails(context.Background(), &pb.GetUserDetailsRequest{
 		Id: uint64(id),
 	})
-	if err != nil{
+	if err != nil {
 		return []models.UserDetails4user{}, errors.New("error in getiing userdetails")
 	}
-	var userdetails  []models.UserDetails4user
+	var userdetails []models.UserDetails4user
 
-	for _,ud := range res.Userdetails{
+	for _, ud := range res.Userdetails {
 		userdetails = append(userdetails, models.UserDetails4user{
-			ID: uint(ud.Id),
-			Firstname: ud.Firstname,
-			Lastname: ud.Lastname,
-			Username: ud.Username,
-			Phone: ud.Phone,
-			Email: ud.Email,
+			ID:          uint(ud.Id),
+			Firstname:   ud.Firstname,
+			Lastname:    ud.Lastname,
+			Username:    ud.Username,
+			Phone:       ud.Phone,
+			Email:       ud.Email,
 			DateOfBirth: ud.DateOfBirth,
-			Profile: ud.Profile,
-			Bio: ud.Bio,
+			Profile:     ud.Profile,
+			Bio:         ud.Bio,
 		})
 	}
-	return userdetails,nil
-	
+	return userdetails, nil
+
 }
 
 func (ad *authClient) ChangePassword(id int, passworddetails models.ChangePassword) error {
@@ -251,7 +228,6 @@ func (ad *authClient) ChangePassword(id int, passworddetails models.ChangePasswo
 	return nil
 }
 
-
 func (uc *authClient) UserOTPLogin(email string) (string, error) {
 	resp, err := uc.Client.UserOTPLogin(context.Background(), &pb.UserOTPLoginRequest{
 		Email: email,
@@ -266,7 +242,6 @@ func (uc *authClient) UserOTPLogin(email string) (string, error) {
 
 	return resp.Otp, nil
 }
-
 
 func (uc *authClient) OtpVerification(email, otp string) (bool, error) {
 	resp, err := uc.Client.OtpVerification(context.Background(), &pb.OtpVerificationRequest{
@@ -284,73 +259,104 @@ func (uc *authClient) OtpVerification(email, otp string) (bool, error) {
 	return true, nil
 }
 
-func(ad *authClient) FollowReq(id int,userid int)error{
-	_,err := ad.Client.FollowReq(context.Background(),&pb.FollowReqRequest{
-		UserID: int64(id),
+func (ad *authClient) FollowReq(id int, userid int) error {
+	_, err := ad.Client.FollowReq(context.Background(), &pb.FollowReqRequest{
+		UserID:        int64(id),
 		FollowingUser: int64(userid),
 	})
-	if err != nil{
-		return  errors.New("error in followrequest ")
+	if err != nil {
+		return errors.New("error in followrequest ")
 	}
 	return nil
 }
 
-func(ad *authClient) AcceptFollowreq(id int,userid int)error{
-	_,err := ad.Client.AcceptFollowReq(context.Background(),&pb.AcceptFollowReqRequest{
-		UserID: int64(id),
+func (ad *authClient) AcceptFollowreq(id int, userid int) error {
+	_, err := ad.Client.AcceptFollowReq(context.Background(), &pb.AcceptFollowReqRequest{
+		UserID:        int64(id),
 		FollowingUser: int64(userid),
 	})
-	if err != nil{
+	if err != nil {
 		return errors.New("error in accepting follower")
 	}
 	return nil
 }
 
-func (ad *authClient) Unfollow(id int,userid int)error{
-	_,err := ad.Client.Unfollow(context.Background(),&pb.UnfollowRequest{
-		UserID: int64(id),
+func (ad *authClient) Unfollow(id int, userid int) error {
+	_, err := ad.Client.Unfollow(context.Background(), &pb.UnfollowRequest{
+		UserID:        int64(id),
 		FollowingUser: int64(userid),
 	})
 
-	if err != nil{
+	if err != nil {
 		return errors.New("error in unfollow the follower")
 	}
 	return nil
 }
 
-func (ad *authClient) Followers(id int)([]models.Followersresponse,error){
-	res,err := ad.Client.Followers(context.Background(),&pb.FollowersRequest{
+func (ad *authClient) Followers(id int) ([]models.Followersresponse, error) {
+	res, err := ad.Client.Followers(context.Background(), &pb.FollowersRequest{
 		UserID: int64(id),
 	})
-	if err != nil{
-		return []models.Followersresponse{},err
+	if err != nil {
+		return []models.Followersresponse{}, err
 	}
 	var userdetails []models.Followersresponse
 
-	for _,ud := range res.Users{
-		userdetails = append(userdetails,models.Followersresponse{
-            Username: ud.Username,
-			Profile: ud.UserProfile,
+	for _, ud := range res.Users {
+		userdetails = append(userdetails, models.Followersresponse{
+			Username: ud.Username,
+			Profile:  ud.UserProfile,
 		})
 	}
-	return userdetails,nil
+	return userdetails, nil
 }
 
-func (ad *authClient) Followings(id int)([]models.Followersresponse,error){
-	res,err := ad.Client.Followings(context.Background(),&pb.FollowingRequest{
+func (ad *authClient) Followings(id int) ([]models.Followersresponse, error) {
+	res, err := ad.Client.Followings(context.Background(), &pb.FollowingRequest{
 		UserID: int64(id),
 	})
-	if err != nil{
-		return []models.Followersresponse{},err
+	if err != nil {
+		return []models.Followersresponse{}, err
 	}
 
 	var userdetails []models.Followersresponse
 
-	for _,ud := range res.Users{
-		userdetails = append(userdetails,models.Followersresponse{
-            Username: ud.Username,
-			Profile: ud.UserProfile,
+	for _, ud := range res.Users {
+		userdetails = append(userdetails, models.Followersresponse{
+			Username: ud.Username,
+			Profile:  ud.UserProfile,
 		})
 	}
-	return userdetails,nil
+	return userdetails, nil
+}
+
+func (ad *authClient) SendOTP(phone string) error {
+	_, err := ad.Client.SendOTP(context.Background(), &pb.SendOTPRequest{
+		Phone: phone,
+	})
+	if err != nil {
+		return errors.New("error while sending otp")
+	}
+	return nil
+}
+
+func (ad *authClient) VerifyOTP(code models.VerifyData) (models.TokenUser, error) {
+	user, err := ad.Client.VerifyOTP(context.Background(), &pb.VerifyOTPRequest{
+		Phone: code.PhoneNumber,
+		Code:  code.Code,
+	})
+	if err != nil {
+		return models.TokenUser{}, err
+	}
+	return models.TokenUser{
+		User: models.UserDetailsResponse{
+			ID:        uint(user.Info.Id),
+			Firstname: user.Info.Firstname,
+			Lastname:  user.Info.Lastname,
+			Username:  user.Info.Username,
+			Email:     user.Info.Email,
+		},
+		AccesToken:   user.AccessToken,
+		RefreshToken: user.RefreshToken,
+	}, nil
 }

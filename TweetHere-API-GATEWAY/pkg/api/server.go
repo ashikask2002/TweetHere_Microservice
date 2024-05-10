@@ -17,12 +17,13 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 	router.Use(gin.Logger())
 
 	router.POST("/admin/login", authHandler.LoginHandler)
-	router.POST("/admin/signup", authHandler.AdminSignUp)
 
 	router.POST("/user/signup", authHandler.UserSignUp)
 	router.POST("/user/login", authHandler.UserLogin)
 	router.POST("/user/otplogin", authHandler.UserOTPLogin)
 	router.POST("/user/otpverify", authHandler.VerifyOTP)
+	router.POST("/user/sendOTP", authHandler.SendOTP)
+	router.POST("/user/verifyOTP", authHandler.VerifyOTP)
 
 	router.Use(middleware.AuthMiddleware)
 	{

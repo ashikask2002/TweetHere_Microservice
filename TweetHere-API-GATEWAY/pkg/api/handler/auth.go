@@ -21,26 +21,6 @@ func NewAuthHandler(adminClient interfaces.AdminClient) *AuthHandler {
 	}
 }
 
-func (ad *AuthHandler) AdminSignUp(c *gin.Context) {
-	var adminDetails models.AdminSignup
-
-	if err := c.ShouldBindJSON(&adminDetails); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-
-	admin, err := ad.GRPC_Client.AdminSignUp(adminDetails)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusInternalServerError, "Cannot authenticate admin0 ", nil, err.Error())
-		c.JSON(http.StatusInternalServerError, errs)
-		return
-	}
-
-	success := response.ClientResponse(http.StatusOK, "Admin created successfully", admin, nil)
-	c.JSON(http.StatusOK, success)
-}
-
 func (ad *AuthHandler) LoginHandler(c *gin.Context) {
 	var adminDetails models.AdminLogin
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
@@ -238,25 +218,6 @@ func (uh *AuthHandler) UserOTPLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-func (ot *AuthHandler) VerifyOTP(c *gin.Context) {
-	var code models.OtpVerification
-	if err := c.BindJSON(&code); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	verified, err := ot.GRPC_Client.OtpVerification(code.Email, code.Otp)
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not verify OTP", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	successRes := response.ClientResponse(http.StatusOK, "Successfully verified OTP", verified, nil)
-	c.JSON(http.StatusOK, successRes)
-}
-
 func (ad *AuthHandler) FollowReq(c *gin.Context) {
 	id_string, _ := c.Get("id")
 	id := id_string.(int)
@@ -335,4 +296,38 @@ func (ad *AuthHandler) Followings(c *gin.Context) {
 	}
 	successres := response.ClientResponse(http.StatusOK, "successfully got followings", details, nil)
 	c.JSON(http.StatusOK, successres)
+}
+
+func (ad *AuthHandler) SendOTP(c *gin.Context) {
+	var phone models.OTPData
+	if err := c.BindJSON(&phone); err != nil {
+		errorres := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorres)
+	}
+
+	err := ad.GRPC_Client.SendOTP(phone.PhoneNumber)
+	if err != nil {
+		errores := response.ClientResponse(http.StatusBadRequest, "seding otp is failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errores)
+	}
+
+}
+
+func (ad *AuthHandler) VerifyOTP(c *gin.Context) {
+	var code models.VerifyData
+	if err := c.BindJSON(&code); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields are provided in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	users, err := ad.GRPC_Client.VerifyOTP(code)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "verifying the otp is failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	successres := response.ClientResponse(http.StatusOK, "successfully verified ", users, nil)
+	c.JSON(http.StatusOK, successres)
+	return
 }
