@@ -16,7 +16,7 @@ func InitializeAPI(cfg config.Config) (*server.Server, error) {
 	}
 
 	adminRepository := repository.NewAuthRepository(gormDB)
-	adminUsecase := usecase.NewAuthUseCase(adminRepository)
+	adminUsecase := usecase.NewAuthUseCase(cfg,adminRepository)
 	adminServiceServer := service.NewAuthServer(adminUsecase)
 	grpcServer, err := server.NewGRPCServer(cfg, adminServiceServer)
 

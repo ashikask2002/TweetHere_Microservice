@@ -110,3 +110,8 @@ type Followersresponse struct {
 type FollowResp struct {
 	FollowingUser int `json:"following_user"`
 }
+
+type VerifyData struct {
+	PhoneNumber string `json:"phone,omitempty" validate:"required"`
+	Code        string `json:"code,omitempty" validate:"required"`
+}

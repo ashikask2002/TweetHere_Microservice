@@ -21,33 +21,6 @@ func NewAuthServer(useCase interfaces.AdminUseCase) pb.AuthServiceServer {
 	}
 }
 
-func (ad *AuthServer) AdminSignUp(ctx context.Context, req *pb.AdminSignupRequest) (*pb.AdminSignupResponse, error) {
-	adminSignup := models.AdminSignUp{
-		Firstname: req.Firstname,
-		Lastname:  req.Lastname,
-		Email:     req.Email,
-		Password:  req.Password,
-	}
-
-	fmt.Println("service", adminSignup)
-
-	res, err := ad.authUseCase.AdminSignUp(adminSignup)
-	if err != nil {
-		return &pb.AdminSignupResponse{}, err
-	}
-	adminDetails := &pb.AdminDetails{
-		Id:        uint64(res.Admin.ID),
-		Firstname: res.Admin.Firstname,
-		Lastname:  res.Admin.Lastname,
-		Email:     res.Admin.Email,
-	}
-	return &pb.AdminSignupResponse{
-		Status:       201,
-		AdminDetails: adminDetails,
-		Token:        res.Token,
-	}, nil
-}
-
 func (ad *AuthServer) AdminLogin(ctx context.Context, req *pb.AdminLoginRequest) (*pb.AdminLoginResponse, error) {
 	fmt.Println("ssssssssssss", req)
 	adminLogin := models.AdminLogin{
@@ -378,5 +351,38 @@ func (ad *AuthServer) Followings(ctx context.Context, req *pb.FollowingRequest) 
 	}
 	return &pb.FollowingResponse{
 		Users: userdetails,
+	}, nil
+}
+
+func (ad *AuthServer) SendOTP(ctx context.Context, req *pb.SendOTPRequest) (*pb.SendOTPResponse, error) {
+	phone := req.Phone
+
+	err := ad.authUseCase.SendOTP(phone)
+	if err != nil {
+		return &pb.SendOTPResponse{}, err
+	}
+	return &pb.SendOTPResponse{}, nil
+}
+
+func (ad *AuthServer) VerifyOTP(ctx context.Context, req *pb.VerifyOTPRequest) (*pb.VerifyOTPResponse, error) {
+	udetails := models.VerifyData{
+		PhoneNumber: req.Phone,
+		Code:        req.Code,
+	}
+	details, err := ad.authUseCase.VerifyOTP(udetails)
+	if err != nil {
+		return &pb.VerifyOTPResponse{}, err
+	}
+	userdetails := pb.UserInfo{
+		Id:        int64(details.User.ID),
+		Firstname: details.User.Firstname,
+		Lastname:  details.User.Lastname,
+		Username:  details.User.Username,
+		Email:     details.User.Email,
+	}
+	return &pb.VerifyOTPResponse{
+		Info:         &userdetails,
+		AccessToken:  details.AccesToken,
+		RefreshToken: details.RefreshToken,
 	}, nil
 }

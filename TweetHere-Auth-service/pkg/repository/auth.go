@@ -22,16 +22,6 @@ func NewAuthRepository(DB *gorm.DB) interfaces.AuthRepository {
 	}
 }
 
-func (ad *authRepository) AdminSignUp(adminDetails models.AdminSignUp) (models.AdminDetailsResponse, error) {
-	var model models.AdminDetailsResponse
-
-	if err := ad.DB.Raw("INSERT INTO admins (firstname,lastname,email,password) VALUES (?,?,?,?) RETURNING id,firstname,lastname,email", adminDetails.Firstname, adminDetails.Lastname, adminDetails.Email, adminDetails.Password).Scan(&model).Error; err != nil {
-		return models.AdminDetailsResponse{}, err
-	}
-	fmt.Println("modelsssssssssssss", model)
-	return model, nil
-}
-
 func (ad *authRepository) CheckAdminExistByEmail(email string) (*domain.Admin, error) {
 	var admin domain.Admin
 	res := ad.DB.Where(&domain.Admin{Email: email}).First(&admin)
@@ -244,6 +234,15 @@ func (ad *authRepository) ExistFollowreq(userid, followingUserID int) bool {
 	return count > 0
 }
 
+func (ad *authRepository) ExistFollowers(userid, followingUserID int) bool {
+	var count int
+	err := ad.DB.Raw("SELECT COUNT(*) FROM followings WHERE following_user= ? AND user_id = ? ", followingUserID, userid).Scan(&count).Error
+	if err != nil {
+		return false
+	}
+	return count > 0
+}
+
 func (ad *authRepository) FollowReq(userid int, followinguserid int) error {
 	err := ad.DB.Exec("INSERT INTO following_requests (user_id,following_user,created_at)VALUES(?,?,NOW())", userid, followinguserid).Error
 	if err != nil {
@@ -326,4 +325,27 @@ func (ur *authRepository) Followings(userID int) ([]models.FollowResp, error) {
 		return []models.FollowResp{}, err
 	}
 	return response, nil
+}
+
+
+func (ot *authRepository) FindUserByMobileNumber(phone string) bool {
+
+
+
+	var count int
+	if err := ot.DB.Raw("select count(*) from users where phone = ?", phone).Scan(&count).Error; err != nil {
+		return false
+	}
+
+	return count > 0
+}
+
+func (ot *authRepository) UserDetailsUsingPhone(phone string) (models.UserDetailsResponse, error) {
+
+	var userDetails models.UserDetailsResponse
+	if err := ot.DB.Raw("select * from users where phone = ?", phone).Scan(&userDetails).Error; err != nil {
+		return models.UserDetailsResponse{}, err
+	}
+	return userDetails, nil
+
 }

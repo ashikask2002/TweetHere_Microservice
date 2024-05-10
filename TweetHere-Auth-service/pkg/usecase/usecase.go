@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"Tweethere-Auth/pkg/config"
 	"Tweethere-Auth/pkg/domain"
 	"Tweethere-Auth/pkg/helper"
 	"Tweethere-Auth/pkg/randomnumbergenerator"
@@ -17,43 +18,15 @@ import (
 )
 
 type authUseCase struct {
+	cfg            config.Config
 	authRepository interfaces.AuthRepository
 }
 
-func NewAuthUseCase(repository interfaces.AuthRepository) services.AdminUseCase {
+func NewAuthUseCase(cfg config.Config, repository interfaces.AuthRepository) services.AdminUseCase {
 	return &authUseCase{
+		cfg:            cfg,
 		authRepository: repository,
 	}
-}
-
-func (ad *authUseCase) AdminSignUp(admin models.AdminSignUp) (*domain.TokenAdmin, error) {
-	email, err := ad.authRepository.CheckAdminExistByEmail(admin.Email)
-	if err != nil {
-		return &domain.TokenAdmin{}, errors.New("error with server")
-	}
-	if email != nil {
-		return &domain.TokenAdmin{}, errors.New("user with this email already exist")
-	}
-	hashedpassword, err := helper.PasswordHash(admin.Password)
-	if err != nil {
-		return &domain.TokenAdmin{}, errors.New("error in hashing password")
-	}
-	admin.Password = hashedpassword
-	admindata, err := ad.authRepository.AdminSignUp(admin)
-	if err != nil {
-		return &domain.TokenAdmin{}, errors.New("could not added the user")
-
-	}
-	tokenString, err := helper.GenerateTokenAdmin(admindata)
-	fmt.Println("token errrr is", err)
-	if err != nil {
-		return &domain.TokenAdmin{}, err
-	}
-
-	return &domain.TokenAdmin{
-		Admin: admindata,
-		Token: tokenString,
-	}, nil
 }
 
 func (ad *authUseCase) LoginHandler(admin models.AdminLogin) (*domain.TokenAdmin, error) {
@@ -313,118 +286,161 @@ func (r *authUseCase) OtpVerification(email, otp string) (bool, error) {
 	return verified, nil
 }
 
-func (ad *authUseCase) FollowReq(id int,userid int)error{
- userExist := ad.authRepository.CheckUserAvailability(id)
- if !userExist{
-	return errors.New("user doesnt exist")
- }
- followuserExist := ad.authRepository.CheckUserAvailability(userid)
- if !followuserExist{
-	return errors.New("user doesnt exist")
- }
- err := ad.authRepository.ExistFollowreq(id,userid)
- if err {
-	return errors.New("request already exist")
- }
- errs := ad.authRepository.FollowReq(id ,userid)
- if errs != nil {
-	return errs
- }
- return nil
- 	
-}
-
-func (ad *authUseCase) AcceptFollowReq(id int,userid int)error{
+func (ad *authUseCase) FollowReq(id int, userid int) error {
 	userExist := ad.authRepository.CheckUserAvailability(id)
-	if !userExist{
+	if !userExist {
 		return errors.New("user doesnt exist")
 	}
 	followuserExist := ad.authRepository.CheckUserAvailability(userid)
-	if !followuserExist{
+	if !followuserExist {
 		return errors.New("user doesnt exist")
 	}
-	req := ad.authRepository.CheckRequest(id,userid)
-	if !req{
+	err := ad.authRepository.ExistFollowers(id, userid)
+	if err {
+		return errors.New("request already exist")
+	}
+	errs := ad.authRepository.FollowReq(id, userid)
+	if errs != nil {
+		return errs
+	}
+	return nil
+
+}
+
+func (ad *authUseCase) AcceptFollowReq(id int, userid int) error {
+	userExist := ad.authRepository.CheckUserAvailability(id)
+	if !userExist {
+		return errors.New("user doesnt exist")
+	}
+	followuserExist := ad.authRepository.CheckUserAvailability(userid)
+	if !followuserExist {
+		return errors.New("user doesnt exist")
+	}
+	req := ad.authRepository.CheckRequest(id, userid)
+	if !req {
 		return errors.New("no request available")
 	}
-	alreadyfollow := ad.authRepository.AlreadyAccepted(id,userid)
-	if alreadyfollow{
+	alreadyfollow := ad.authRepository.AlreadyAccepted(id, userid)
+	if alreadyfollow {
 		return errors.New("already exist")
 	}
 
-	err := ad.authRepository.AcceptFollowREQ(id,userid)
-	if err != nil{
+	err := ad.authRepository.AcceptFollowREQ(id, userid)
+	if err != nil {
 		return err
 	}
 	return nil
 
 }
 
-func (ad *authUseCase) Unfollow(id int,userid int)error{
+func (ad *authUseCase) Unfollow(id int, userid int) error {
 	userExist := ad.authRepository.CheckUserAvailability(id)
-	if !userExist{
+	if !userExist {
 		return errors.New("user doesnt exist")
 	}
 	follouserExist := ad.authRepository.CheckUserAvailability(userid)
-	if !follouserExist{
+	if !follouserExist {
 		return errors.New("user doesnt exist")
 	}
-	err := ad.authRepository.UnFollow(id,userid)
+	err := ad.authRepository.UnFollow(id, userid)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ad *authUseCase) Followers(id int)([]models.Followersresponse,error){
+func (ad *authUseCase) Followers(id int) ([]models.Followersresponse, error) {
 	userid := ad.authRepository.CheckUserAvailability(id)
-	if !userid{
-		return []models.Followersresponse{},errors.New("user doenst exist")
+	if !userid {
+		return []models.Followersresponse{}, errors.New("user doenst exist")
 	}
-	ids,err := ad.authRepository.Followers(id)
-	if err != nil{
-		return []models.Followersresponse{},err
+	ids, err := ad.authRepository.Followers(id)
+	if err != nil {
+		return []models.Followersresponse{}, err
 	}
 	var userresp []models.Followersresponse
 
-	for _,ud := range ids{
-      details,err := ad.authRepository.Followdetails(int(ud.FollowingUser))
-	  if err != nil{
-		return []models.Followersresponse{},err
-	  }
-	  userresp = append(userresp, models.Followersresponse{
-		Username: details.Username,
-		Profile: details.Profile,
-
-	  })
+	for _, ud := range ids {
+		details, err := ad.authRepository.Followdetails(int(ud.FollowingUser))
+		if err != nil {
+			return []models.Followersresponse{}, err
+		}
+		userresp = append(userresp, models.Followersresponse{
+			Username: details.Username,
+			Profile:  details.Profile,
+		})
 	}
-	return userresp,nil
+	return userresp, nil
 
 }
 
-func (ad *authUseCase) Followings(id int)([]models.Followersresponse,error){
+func (ad *authUseCase) Followings(id int) ([]models.Followersresponse, error) {
 	userid := ad.authRepository.CheckUserAvailability(id)
-	if !userid{
-		return []models.Followersresponse{},errors.New("user doenst exist")
+	if !userid {
+		return []models.Followersresponse{}, errors.New("user doenst exist")
 	}
 
-	ids,err := ad.authRepository.Followings(id)
-	if err != nil{
-		return []models.Followersresponse{},err
+	ids, err := ad.authRepository.Followings(id)
+	if err != nil {
+		return []models.Followersresponse{}, err
 	}
 
 	var userresp []models.Followersresponse
 
-	for _,ud := range ids{
-		details,err := ad.authRepository.Followdetails(int(ud.FollowingUser))
-		if err != nil{
-		  return []models.Followersresponse{},err
+	for _, ud := range ids {
+		details, err := ad.authRepository.Followdetails(int(ud.FollowingUser))
+		if err != nil {
+			return []models.Followersresponse{}, err
 		}
 		userresp = append(userresp, models.Followersresponse{
-		  Username: details.Username,
-		  Profile: details.Profile,
-  
+			Username: details.Username,
+			Profile:  details.Profile,
 		})
-	  }
-	  return userresp,nil
+	}
+	return userresp, nil
+}
+
+func (ad *authUseCase) SendOTP(phone string) error {
+	phoneNumber := helper.PhoneValidation(phone)
+	if !phoneNumber {
+		return errors.New("invalid phone number")
+	}
+	ok := ad.authRepository.FindUserByMobileNumber(phone)
+	if !ok {
+		return errors.New("user with this phone does not exist")
+	}
+	helper.TwilioSetup(ad.cfg.ACCOUNTSID, ad.cfg.AUTHTOKEN)
+	_, err := helper.TwilioSendOTP(phone, ad.cfg.SERVICESID)
+	if err != nil {
+		return errors.New("error occured while generatig otp")
+	}
+	return nil
+}
+func (ad *authUseCase) VerifyOTP(details models.VerifyData) (*domain.TokenUser, error) {
+	helper.TwilioSetup(ad.cfg.ACCOUNTSID, ad.cfg.AUTHTOKEN)
+	err := helper.TwilioVerifyOTP(ad.cfg.SERVICESID, details.Code, details.PhoneNumber)
+	if err != nil {
+		return &domain.TokenUser{}, err
+	}
+
+	userdetails, err := ad.authRepository.UserDetailsUsingPhone(details.PhoneNumber)
+	if err != nil {
+		return &domain.TokenUser{}, err
+	}
+
+	access, refresh, err := helper.GenerateTokenUser(userdetails)
+	if err != nil {
+		return &domain.TokenUser{}, err
+	}
+	var user models.UserDetailsResponse
+
+	err = copier.Copy(&user, &userdetails)
+	if err != nil {
+		return &domain.TokenUser{}, err
+	}
+	return &domain.TokenUser{
+		User:         user,
+		AccesToken:   access,
+		RefreshToken: refresh,
+	}, nil
 }

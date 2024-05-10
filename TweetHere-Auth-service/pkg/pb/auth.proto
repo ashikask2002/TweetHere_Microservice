@@ -24,6 +24,8 @@ service AuthService{
      rpc Unfollow(UnfollowRequest) returns(UnfollowResponse){};
      rpc Followers(FollowersRequest) returns(FollowersResponse){};
      rpc Followings(FollowingRequest) returns(FollowingResponse){};
+     rpc SendOTP(SendOTPRequest) returns(SendOTPResponse){};
+     rpc VerifyOTP(verifyOTPRequest) returns(VerifyOTPResponse){};
     
 
 }
@@ -264,4 +266,21 @@ message FollowingRequest{
 
 message FollowingResponse{
   repeated FollowResponse users =1;
+}
+message SendOTPRequest{
+    string phone =1;
+}
+message SendOTPResponse{
+    
+}
+
+message verifyOTPRequest{
+    string phone = 1;
+    string code =2;
+}
+
+message VerifyOTPResponse{
+    UserInfo info=1;
+    string accessToken =2;
+    string refreshToken=3;
 }

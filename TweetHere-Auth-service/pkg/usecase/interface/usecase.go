@@ -6,7 +6,6 @@ import (
 )
 
 type AdminUseCase interface {
-	AdminSignUp(admindetails models.AdminSignUp) (*domain.TokenAdmin, error)
 	LoginHandler(admindetails models.AdminLogin) (*domain.TokenAdmin, error)
 	BlockUser(id string) error
 	UnBlockUser(id string) error
@@ -25,4 +24,6 @@ type AdminUseCase interface {
 	Unfollow(id, userid int) error
 	Followers(id int) ([]models.Followersresponse, error)
 	Followings(id int) ([]models.Followersresponse, error)
+	SendOTP(phone string) error
+	VerifyOTP(udetails models.VerifyData)(*domain.TokenUser,error)
 }
