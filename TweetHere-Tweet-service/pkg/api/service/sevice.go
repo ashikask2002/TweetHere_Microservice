@@ -176,6 +176,7 @@ func (ad *TweetServer) RplyCommentPost(ctx context.Context, req *pb.RplyCommentP
 	postid := req.Postid
 	comment := req.Comment
 	parentid := req.Parentid
+	fmt.Println("helloooo")
 
 	err := ad.tweetUseCase.RplyCommentPost(int(id), int(postid), comment, int(parentid))
 	if err != nil {
