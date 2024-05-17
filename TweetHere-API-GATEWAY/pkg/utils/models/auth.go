@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type AdminLogin struct {
 	Email    string `json:"email" binding:"required" validate:"required"`
 	Password string `json:"password" binding:"required" validate:"min=6,max=20"`
@@ -142,4 +144,22 @@ type OTPData struct {
 type VerifyData struct {
 	PhoneNumber string `json:"phone,omitempty" validate:"required"`
 	Code        string `json:"code,omitempty" validate:"required"`
+}
+
+type PostDetails struct {
+	Description string `json:"description"`
+}
+
+type PostResponse struct {
+	UserID      int       `json:"user_id"`
+	Description string    `json:"description"`
+	Url         string    `json:"url" gorm:"column:media_url"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type CommentsResponse struct {
+	Username  string    `json:"username"`
+	Profile   string    `json:"profile"`
+	Comment   string    `json:"comment"`
+	CreatedAt time.Time `json:"created_at"`
 }

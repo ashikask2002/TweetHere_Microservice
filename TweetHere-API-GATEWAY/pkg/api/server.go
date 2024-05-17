@@ -12,7 +12,7 @@ type ServerHttp struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
+func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler) *ServerHttp {
 	router := gin.New()
 	router.Use(gin.Logger())
 
@@ -38,7 +38,17 @@ func NewServerHTTP(authHandler *handler.AuthHandler) *ServerHttp {
 			usermanagement.POST("unfollow", authHandler.Unfollow)
 			usermanagement.GET("/followers", authHandler.Followers)
 			usermanagement.GET("/followings", authHandler.Followings)
-
+			usermanagement.POST("/profilepic", authHandler.UploadProfilepic)
+			usermanagement.POST("/addpost", tweetHandler.AddTweet)
+			usermanagement.GET("/getourpost", tweetHandler.GetOurTweet)
+			usermanagement.GET("/getotherspost", tweetHandler.GetOthersTweet)
+			usermanagement.PATCH("/editpost", tweetHandler.EditTweet)
+			usermanagement.DELETE("/deletpost", tweetHandler.DeletePost)
+			usermanagement.POST("/likepost", tweetHandler.LikePost)
+			usermanagement.POST("/unlikepost", tweetHandler.UnLikePost)
+			usermanagement.POST("/savepost", tweetHandler.SavePost)
+			usermanagement.POST("/unsavepost", tweetHandler.UnSavePost)
+			usermanagement.POST("/commentpost", tweetHandler.CommentPost)
 		}
 
 		adminmanagement := router.Group("/admins")

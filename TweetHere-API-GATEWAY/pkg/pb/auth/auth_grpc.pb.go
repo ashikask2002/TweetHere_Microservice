@@ -38,6 +38,7 @@ const (
 	AuthService_Followings_FullMethodName        = "/admin.AuthService/Followings"
 	AuthService_SendOTP_FullMethodName           = "/admin.AuthService/SendOTP"
 	AuthService_VerifyOTP_FullMethodName         = "/admin.AuthService/VerifyOTP"
+	AuthService_UploadProfilepic_FullMethodName  = "/admin.AuthService/UploadProfilepic"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -63,6 +64,7 @@ type AuthServiceClient interface {
 	Followings(ctx context.Context, in *FollowingRequest, opts ...grpc.CallOption) (*FollowingResponse, error)
 	SendOTP(ctx context.Context, in *SendOTPRequest, opts ...grpc.CallOption) (*SendOTPResponse, error)
 	VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error)
+	UploadProfilepic(ctx context.Context, in *UploadProfilepicRequest, opts ...grpc.CallOption) (*UploadProfilepicResponse, error)
 }
 
 type authServiceClient struct {
@@ -244,6 +246,15 @@ func (c *authServiceClient) VerifyOTP(ctx context.Context, in *VerifyOTPRequest,
 	return out, nil
 }
 
+func (c *authServiceClient) UploadProfilepic(ctx context.Context, in *UploadProfilepicRequest, opts ...grpc.CallOption) (*UploadProfilepicResponse, error) {
+	out := new(UploadProfilepicResponse)
+	err := c.cc.Invoke(ctx, AuthService_UploadProfilepic_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -267,6 +278,7 @@ type AuthServiceServer interface {
 	Followings(context.Context, *FollowingRequest) (*FollowingResponse, error)
 	SendOTP(context.Context, *SendOTPRequest) (*SendOTPResponse, error)
 	VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error)
+	UploadProfilepic(context.Context, *UploadProfilepicRequest) (*UploadProfilepicResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -330,6 +342,9 @@ func (UnimplementedAuthServiceServer) SendOTP(context.Context, *SendOTPRequest) 
 }
 func (UnimplementedAuthServiceServer) VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyOTP not implemented")
+}
+func (UnimplementedAuthServiceServer) UploadProfilepic(context.Context, *UploadProfilepicRequest) (*UploadProfilepicResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadProfilepic not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -686,6 +701,24 @@ func _AuthService_VerifyOTP_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_UploadProfilepic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadProfilepicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UploadProfilepic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UploadProfilepic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UploadProfilepic(ctx, req.(*UploadProfilepicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -768,6 +801,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyOTP",
 			Handler:    _AuthService_VerifyOTP_Handler,
+		},
+		{
+			MethodName: "UploadProfilepic",
+			Handler:    _AuthService_UploadProfilepic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

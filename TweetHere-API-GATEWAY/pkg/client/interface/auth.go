@@ -1,6 +1,9 @@
 package interfaces
 
-import "TweetHere-API/pkg/utils/models"
+import (
+	"TweetHere-API/pkg/utils/models"
+	"mime/multipart"
+)
 
 type AdminClient interface {
 	
@@ -25,5 +28,6 @@ type AdminClient interface {
 	Followings(id int)([]models.Followersresponse,error)
 	SendOTP(phone string)error
 	VerifyOTP(code models.VerifyData)(models.TokenUser,error)
+	UploadProfilepic(id int,file *multipart.FileHeader)error
 
 }

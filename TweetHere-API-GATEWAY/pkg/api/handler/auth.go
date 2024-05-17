@@ -329,5 +329,35 @@ func (ad *AuthHandler) VerifyOTP(c *gin.Context) {
 	}
 	successres := response.ClientResponse(http.StatusOK, "successfully verified ", users, nil)
 	c.JSON(http.StatusOK, successres)
-	
+
+}
+
+func (ad *AuthHandler) UploadProfilepic(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "retreiving images from form error", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	files := form.File["files"]
+	if len(files) == 0 {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "no files are provided", nil, nil)
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	for _, file := range files {
+		err := ad.GRPC_Client.UploadProfilepic(id, file)
+		if err != nil {
+			errorRes := response.ClientResponse(http.StatusBadRequest, "could not change one or more images", nil, err.Error())
+			c.JSON(http.StatusBadRequest, errorRes)
+			return
+		}
+	}
+	successres := response.ClientResponse(http.StatusOK, "uploaded successfully ", nil, nil)
+	c.JSON(http.StatusOK, successres)
+
 }

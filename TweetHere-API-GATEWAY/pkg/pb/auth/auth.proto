@@ -27,6 +27,7 @@ service AuthService{
     rpc Followings(FollowingRequest) returns(FollowingResponse){};
     rpc SendOTP(SendOTPRequest) returns(SendOTPResponse){};
     rpc VerifyOTP(verifyOTPRequest) returns(VerifyOTPResponse){};
+    rpc UploadProfilepic(UploadProfilepicRequest) returns(UploadProfilepicResponse){};
 }
 message AdminSignupRequest{
     string firstname=1;
@@ -280,4 +281,13 @@ message VerifyOTPResponse{
     UserInfo info=1;
     string accessToken =2;
     string refreshToken=3;
+}
+
+message UploadProfilepicRequest{
+    int64 userID =1;
+    bytes file=2;
+}
+
+message UploadProfilepicResponse{
+
 }

@@ -7,10 +7,11 @@ import (
 type Config struct {
 	Port        string `mapstructure:"PORT"`
 	AdminSvcUrl string `mapstructure:"ADMIN_SVC_URL"`
+	TweeSvcUrl string `mapstructure:"TWEET_SVC_URL"`
 }
 
 var envs = []string{
-	"PORT", "ADMIN_SVC_URL",
+	"PORT", "ADMIN_SVC_URL","TWEET_SVC_URL",
 }
 
 // func LoadConfig() (Config, error) {

@@ -8,6 +8,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"mime/multipart"
 	"strconv"
 
 	"google.golang.org/grpc"
@@ -359,4 +361,25 @@ func (ad *authClient) VerifyOTP(code models.VerifyData) (models.TokenUser, error
 		AccesToken:   user.AccessToken,
 		RefreshToken: user.RefreshToken,
 	}, nil
+}
+
+func (ad *authClient) UploadProfilepic(id int, file *multipart.FileHeader) error {
+	filecontent, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer filecontent.Close()
+
+	fileBytes, err := ioutil.ReadAll(filecontent)
+	if err != nil {
+		return err
+	}
+	_, err = ad.Client.UploadProfilepic(context.Background(), &pb.UploadProfilepicRequest{
+		UserID: int64(id),
+		File:   fileBytes,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
