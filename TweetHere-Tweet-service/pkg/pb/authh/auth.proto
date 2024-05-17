@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "./pkg/pb/authh";
+
+service AuthService {
+  rpc DoesUserExist(DoesUserExistRequest) returns(DoesUserExistResponse){};
+  rpc FindUserName(FindUserNameRequest) returns(FindUserNameResponse){}
+}
+
+message DoesUserExistRequest{
+    int64 id=1;
+}
+
+message DoesUserExistResponse{
+    bool data=1;
+}
+
+message FindUserNameRequest{
+    int64 id =1;
+}
+message FindUserNameResponse{
+    string name=1;
+}

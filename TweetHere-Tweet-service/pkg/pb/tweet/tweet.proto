@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package tweet;
+import "google/protobuf/timestamp.proto";
+
+option go_package ="./pkg/pb/tweet";
+
+service TweetService{
+    rpc AddTweet(AddTweetRequest) returns(AddTweetResponse){};
+    rpc AddTweet2(AddTweet2Request) returns(AddTweet2Response){};
+    rpc GetOurTweet(GetOurTweetRequest) returns(GetOurTweetResponse){};
+    rpc GetOthersTweet(GetOthersTweetRequest) returns(GetOthersTweetResponse){};
+    rpc EditTweet(EditTweetRequest) returns(EditTweetResponse){};
+    rpc DeletePost(DeletePostRequest) returns(DeletePostResponse){};
+    rpc LikePost(LikePostRequest) returns(LikePostResponse){};
+    rpc UnLikePost(UnLikePostRequest) returns(UnLikePostResponse){};
+    rpc SavePost(SavePostRequest) returns (SavePostResponse){}
+    rpc UnSavePost(UnSavePostRequest) returns(UnSavePostRespone){};
+    rpc RplyCommentPost(RplyCommentPostRequest) returns(RplyCommentPostResponse){};
+    rpc CommentPost(CommentPostRequest) returns(CommentPostResponse){};
+    rpc GetComments(GetCommentsRequest) returns(GetCommentsResponse){};
+}
+
+message AddTweetRequest{
+    int64 id=1;
+    string descritption=2;
+    bytes file=3;
+}
+
+message AddTweetResponse{
+    
+}
+
+
+message AddTweet2Request{
+    int64 id=1;
+    string descritption=2;
+   
+}
+
+message AddTweet2Response{
+    
+}
+
+message GetOurTweetRequest{
+    int64 id =1;
+ }
+
+message TweetReponse{
+    int64 id =1;
+    string description =2;
+    string url=3;
+    google.protobuf.Timestamp time = 4;
+    
+}
+
+message GetOurTweetResponse{
+    repeated TweetReponse postdetails =1;
+}
+
+message GetOthersTweetRequest{
+    int64 id =1;
+ }
+
+ message GetOthersTweetResponse{
+    repeated TweetReponse postdetailss =1;
+}
+
+message  EditTweetRequest{
+    int64 id=1;
+    int64 postid=2;
+    string description =3;
+}
+
+message EditTweetResponse{
+    
+}
+
+message DeletePostRequest{
+    int64 id=1;
+    int64 postid=2;
+}
+
+message DeletePostResponse{
+    
+}
+
+message LikePostRequest{
+    int64 id=1;
+    int64 postid =2;
+}
+
+message LikePostResponse{
+    
+}
+
+message UnLikePostRequest{
+    int64 id =1;
+    int64 postid = 2;
+}
+
+message UnLikePostResponse{
+    
+}
+
+message SavePostRequest{
+    int64 id = 1;
+    int64 postid = 2;
+}
+
+message SavePostResponse{
+
+}
+
+message UnSavePostRequest{
+    int64 id = 1;
+    int64 postid = 2;
+}
+message UnSavePostRespone{
+    
+}
+
+message RplyCommentPostRequest{
+    int64 id=1;
+    int64 postid =2;
+    string comment=3;
+    int64 parentid=4;
+}
+
+message RplyCommentPostResponse{
+}
+
+message CommentPostRequest{
+    int64 id=1;
+    int64 postid=2;
+    string comment=3;
+}
+
+message CommentPostResponse{
+    
+}
+message GetCommentsRequest{
+    int64 postid =1;
+}
+message CommentsResponse{
+   string username=1;
+   string profile=2;
+   string comment=3;
+   google.protobuf.Timestamp time = 4;
+   
+}
+
+message GetCommentsResponse{
+  repeated CommentsResponse comentdetails=1;
+}
