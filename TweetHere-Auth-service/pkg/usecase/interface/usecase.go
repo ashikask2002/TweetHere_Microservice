@@ -25,5 +25,8 @@ type AdminUseCase interface {
 	Followers(id int) ([]models.Followersresponse, error)
 	Followings(id int) ([]models.Followersresponse, error)
 	SendOTP(phone string) error
-	VerifyOTP(udetails models.VerifyData)(*domain.TokenUser,error)
+	VerifyOTP(udetails models.VerifyData) (*domain.TokenUser, error)
+	UploadProfilepic(id int, photo []byte) error
+	DoesUserExist(id int64) bool
+	FindUserName(id int64) (string, error)
 }

@@ -327,10 +327,7 @@ func (ur *authRepository) Followings(userID int) ([]models.FollowResp, error) {
 	return response, nil
 }
 
-
 func (ot *authRepository) FindUserByMobileNumber(phone string) bool {
-
-
 
 	var count int
 	if err := ot.DB.Raw("select count(*) from users where phone = ?", phone).Scan(&count).Error; err != nil {
@@ -348,4 +345,23 @@ func (ot *authRepository) UserDetailsUsingPhone(phone string) (models.UserDetail
 	}
 	return userDetails, nil
 
+}
+
+func (ot *authRepository) UploadProfilepic(id int, url string) error {
+	// Execute the SQL query to update the profile URL
+	err := ot.DB.Exec("UPDATE users SET profile = ? WHERE id = ?", url, id).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ot *authRepository) GetUserName(id int) (string, error) {
+	var name string
+	err := ot.DB.Raw("SELECT username FROM users WHERE id = ?", id).Scan(&name).Error
+	if err != nil {
+		return "", err
+	}
+	return name, nil
 }

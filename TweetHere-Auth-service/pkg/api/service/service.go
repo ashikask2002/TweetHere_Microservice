@@ -386,3 +386,39 @@ func (ad *AuthServer) VerifyOTP(ctx context.Context, req *pb.VerifyOTPRequest) (
 		RefreshToken: details.RefreshToken,
 	}, nil
 }
+
+func (ad *AuthServer) UploadProfilepic(ctx context.Context, req *pb.UploadProfilepicRequest) (*pb.UploadProfilepicResponse, error) {
+	id := req.UserID
+	file := req.File
+
+	err := ad.authUseCase.UploadProfilepic(int(id), file)
+	if err != nil {
+		return &pb.UploadProfilepicResponse{}, err
+	}
+	return &pb.UploadProfilepicResponse{}, nil
+}
+
+func (ad *AuthServer) DoesUserExist(ctx context.Context, req *pb.DoesUserExistRequest) (*pb.DoesUserExistResponse, error) {
+	id := req.Id
+	fmt.Println("iddddd is ", id)
+
+	res := ad.authUseCase.DoesUserExist(id)
+	if !res {
+		return &pb.DoesUserExistResponse{}, errors.New("user doesnt exist")
+	}
+	return &pb.DoesUserExistResponse{
+		Data: true,
+	}, nil
+}
+
+func (ad *AuthServer) FindUserName(ctx context.Context, req *pb.FindUserNameRequest) (*pb.FindUserNameResponse, error) {
+	id := req.Id
+
+	res, err := ad.authUseCase.FindUserName(id)
+	if err != nil {
+		return &pb.FindUserNameResponse{}, err
+	}
+	return &pb.FindUserNameResponse{
+		Name: res,
+	}, nil
+}

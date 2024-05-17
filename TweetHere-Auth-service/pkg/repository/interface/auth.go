@@ -36,4 +36,6 @@ type AuthRepository interface {
 	Followings(userID int) ([]models.FollowResp, error)
 	FindUserByMobileNumber(phone string) bool
 	UserDetailsUsingPhone(phone string) (models.UserDetailsResponse, error)
+	UploadProfilepic(id int,url string)error
+	GetUserName(id int)(string,error)
 }

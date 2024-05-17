@@ -1,12 +1,18 @@
 package helper
 
 import (
+	"Tweethere-Auth/pkg/config"
 	"Tweethere-Auth/pkg/utils/models"
+	"bytes"
 	"errors"
 	"fmt"
 	"regexp"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/golang-jwt/jwt"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/verify/v2"
@@ -158,4 +164,35 @@ func TwilioVerifyOTP(serviceID string, code string, phone string) error {
 	}
 
 	return errors.New("failed to validate otp")
+}
+
+func AddImageToAwsS3(file []byte, filename string) (string, error) {
+	cfg, _ := config.LoadConfig()
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(cfg.REGION),
+		Credentials: credentials.NewStaticCredentials(
+			cfg.AWS_ACCESS_KEY_ID,
+			cfg.AWS_SECRET_ACCESS_KEY,
+			"",
+		),
+	})
+
+	if err != nil {
+		return "", err
+	}
+	uploader := s3manager.NewUploader(sess)
+	bucketName := "tweethere"
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(filename),
+		Body:   bytes.NewReader(file),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, filename)
+	return url, nil
 }

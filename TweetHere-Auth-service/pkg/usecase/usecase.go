@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -443,4 +444,41 @@ func (ad *authUseCase) VerifyOTP(details models.VerifyData) (*domain.TokenUser, 
 		AccesToken:   access,
 		RefreshToken: refresh,
 	}, nil
+}
+
+func (ad *authUseCase) UploadProfilepic(id int, file []byte) error {
+
+	username, _ := ad.authRepository.GetUserName(id)
+
+	fileUID := uuid.New()
+	fileName := fileUID.String()
+	s3path := username + fileName
+
+	url, err := helper.AddImageToAwsS3(file, s3path)
+	if err != nil {
+		return err
+	}
+	err = ad.authRepository.UploadProfilepic(id, url)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *authUseCase) DoesUserExist(id int64) bool {
+	ID := int(id)
+	userExist := ad.authRepository.CheckUserAvailability(ID)
+	if !userExist {
+		return false
+	}
+	return userExist
+}
+
+func (ad *authUseCase) FindUserName(id int64) (string, error) {
+	ID := int(id)
+	username, err := ad.authRepository.GetUserName(ID)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
 }
