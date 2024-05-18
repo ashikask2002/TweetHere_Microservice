@@ -32,6 +32,8 @@ const (
 	TweetService_RplyCommentPost_FullMethodName = "/tweet.TweetService/RplyCommentPost"
 	TweetService_CommentPost_FullMethodName     = "/tweet.TweetService/CommentPost"
 	TweetService_GetComments_FullMethodName     = "/tweet.TweetService/GetComments"
+	TweetService_EditComments_FullMethodName    = "/tweet.TweetService/EditComments"
+	TweetService_DeleteComments_FullMethodName  = "/tweet.TweetService/DeleteComments"
 )
 
 // TweetServiceClient is the client API for TweetService service.
@@ -51,6 +53,8 @@ type TweetServiceClient interface {
 	RplyCommentPost(ctx context.Context, in *RplyCommentPostRequest, opts ...grpc.CallOption) (*RplyCommentPostResponse, error)
 	CommentPost(ctx context.Context, in *CommentPostRequest, opts ...grpc.CallOption) (*CommentPostResponse, error)
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
+	EditComments(ctx context.Context, in *EditCommentsRequet, opts ...grpc.CallOption) (*EditCommentsResponse, error)
+	DeleteComments(ctx context.Context, in *DeleteCommentsRequest, opts ...grpc.CallOption) (*DeleteCommentsResponse, error)
 }
 
 type tweetServiceClient struct {
@@ -178,6 +182,24 @@ func (c *tweetServiceClient) GetComments(ctx context.Context, in *GetCommentsReq
 	return out, nil
 }
 
+func (c *tweetServiceClient) EditComments(ctx context.Context, in *EditCommentsRequet, opts ...grpc.CallOption) (*EditCommentsResponse, error) {
+	out := new(EditCommentsResponse)
+	err := c.cc.Invoke(ctx, TweetService_EditComments_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tweetServiceClient) DeleteComments(ctx context.Context, in *DeleteCommentsRequest, opts ...grpc.CallOption) (*DeleteCommentsResponse, error) {
+	out := new(DeleteCommentsResponse)
+	err := c.cc.Invoke(ctx, TweetService_DeleteComments_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TweetServiceServer is the server API for TweetService service.
 // All implementations must embed UnimplementedTweetServiceServer
 // for forward compatibility
@@ -195,6 +217,8 @@ type TweetServiceServer interface {
 	RplyCommentPost(context.Context, *RplyCommentPostRequest) (*RplyCommentPostResponse, error)
 	CommentPost(context.Context, *CommentPostRequest) (*CommentPostResponse, error)
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
+	EditComments(context.Context, *EditCommentsRequet) (*EditCommentsResponse, error)
+	DeleteComments(context.Context, *DeleteCommentsRequest) (*DeleteCommentsResponse, error)
 	mustEmbedUnimplementedTweetServiceServer()
 }
 
@@ -240,6 +264,12 @@ func (UnimplementedTweetServiceServer) CommentPost(context.Context, *CommentPost
 }
 func (UnimplementedTweetServiceServer) GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
+}
+func (UnimplementedTweetServiceServer) EditComments(context.Context, *EditCommentsRequet) (*EditCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditComments not implemented")
+}
+func (UnimplementedTweetServiceServer) DeleteComments(context.Context, *DeleteCommentsRequest) (*DeleteCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteComments not implemented")
 }
 func (UnimplementedTweetServiceServer) mustEmbedUnimplementedTweetServiceServer() {}
 
@@ -488,6 +518,42 @@ func _TweetService_GetComments_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TweetService_EditComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditCommentsRequet)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TweetServiceServer).EditComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TweetService_EditComments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TweetServiceServer).EditComments(ctx, req.(*EditCommentsRequet))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TweetService_DeleteComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TweetServiceServer).DeleteComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TweetService_DeleteComments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TweetServiceServer).DeleteComments(ctx, req.(*DeleteCommentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TweetService_ServiceDesc is the grpc.ServiceDesc for TweetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -546,6 +612,14 @@ var TweetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetComments",
 			Handler:    _TweetService_GetComments_Handler,
+		},
+		{
+			MethodName: "EditComments",
+			Handler:    _TweetService_EditComments_Handler,
+		},
+		{
+			MethodName: "DeleteComments",
+			Handler:    _TweetService_DeleteComments_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

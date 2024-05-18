@@ -197,23 +197,47 @@ func (ad *tweetClient) CommentPost(id int, postid int, comment string) error {
 	return nil
 }
 
-func (ad *tweetClient) GetComments(postid int)([]models.CommentsResponse,error){
-	details,err := ad.Client.GetComments(context.Background(),&pb.GetCommentsRequest{
+func (ad *tweetClient) GetComments(postid int) ([]models.CommentsResponse, error) {
+	details, err := ad.Client.GetComments(context.Background(), &pb.GetCommentsRequest{
 		Postid: int64(postid),
 	})
-	if err != nil{
-		return []models.CommentsResponse{},err
+	if err != nil {
+		return []models.CommentsResponse{}, err
 	}
 
 	var commentdetails []models.CommentsResponse
 
-	for _,ud := range details.Comentdetails{
+	for _, ud := range details.Comentdetails {
 		commentdetails = append(commentdetails, models.CommentsResponse{
-			Username: ud.Username,
-			Profile: ud.Profile,
-			Comment: ud.Comment,
+			UserId:    int(ud.Id),
+			Username:  ud.Username,
+			Profile:   ud.Profile,
+			Comment:   ud.Comment,
 			CreatedAt: ud.Time.AsTime(),
 		})
 	}
-	return commentdetails,nil
+	return commentdetails, nil
+}
+
+func (ad *tweetClient) EditComments(id int, commentid int, comment string) error {
+	_, err := ad.Client.EditComments(context.Background(), &pb.EditCommentsRequet{
+		Id:        int64(id),
+		Commentid: int64(commentid),
+		Comment:   comment,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *tweetClient) DeleteComments(id int, commentid int) error {
+	_, err := ad.Client.DeleteComments(context.Background(), &pb.DeleteCommentsRequest{
+		Id:        int64(id),
+		Commentid: int64(commentid),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

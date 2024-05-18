@@ -17,6 +17,8 @@ type TweetClient interface {
 	SavePost(id int, postid int) error
 	UnSavePost(id int, postid int) error
 	RplyCommentPost(id int, postid int, comment string, parentid int) error
-	CommentPost(id int,postid int,comment string)error
-	GetComments(postid int)([]models.CommentsResponse,error)
+	CommentPost(id int, postid int, comment string) error
+	GetComments(postid int) ([]models.CommentsResponse, error)
+	EditComments(id int, commentid int, comment string) error
+	DeleteComments(id int, commentid int) error
 }

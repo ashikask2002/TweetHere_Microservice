@@ -29,4 +29,5 @@ type AdminUseCase interface {
 	UploadProfilepic(id int, photo []byte) error
 	DoesUserExist(id int64) bool
 	FindUserName(id int64) (string, error)
+	UserData(id int) (models.UserData,error)
 }

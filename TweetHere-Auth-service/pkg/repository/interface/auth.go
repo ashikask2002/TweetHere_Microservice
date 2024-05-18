@@ -38,4 +38,5 @@ type AuthRepository interface {
 	UserDetailsUsingPhone(phone string) (models.UserDetailsResponse, error)
 	UploadProfilepic(id int,url string)error
 	GetUserName(id int)(string,error)
+	UserData(id int)(models.UserData,error)
 }

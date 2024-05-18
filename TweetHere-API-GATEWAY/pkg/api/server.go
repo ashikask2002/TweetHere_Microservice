@@ -49,6 +49,9 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 			usermanagement.POST("/savepost", tweetHandler.SavePost)
 			usermanagement.POST("/unsavepost", tweetHandler.UnSavePost)
 			usermanagement.POST("/commentpost", tweetHandler.CommentPost)
+			usermanagement.PATCH("/editcomment", tweetHandler.EditComments)
+			usermanagement.DELETE("/deletecomment", tweetHandler.DeleteComments)
+			usermanagement.GET("/getcomments", tweetHandler.GetComments)
 		}
 
 		adminmanagement := router.Group("/admins")

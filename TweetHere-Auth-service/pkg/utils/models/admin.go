@@ -115,3 +115,9 @@ type VerifyData struct {
 	PhoneNumber string `json:"phone,omitempty" validate:"required"`
 	Code        string `json:"code,omitempty" validate:"required"`
 }
+
+type UserData struct {
+	UserID   int    `json:"user_id"`
+	Username string `json:"username"`
+	Profile  string `json:"profile"`
+}

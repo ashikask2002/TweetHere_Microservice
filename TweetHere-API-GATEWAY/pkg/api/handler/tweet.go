@@ -295,3 +295,48 @@ func (ad *TweetHandler) GetComments(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 
 }
+
+func (ad *TweetHandler) EditComments(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	comment_id := c.Query("commentid")
+	commentid, err := strconv.Atoi(comment_id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error in conversion", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	comment := c.Query("comment")
+	errs := ad.GRPC_Client.EditComments(id, commentid, comment)
+	if errs != nil {
+		errr := response.ClientResponse(http.StatusBadRequest, "error in updating comment", nil, errs.Error())
+		c.JSON(http.StatusBadRequest, errr)
+		return
+	}
+	succesres := response.ClientResponse(http.StatusOK, "successfully edited the comment", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+
+}
+
+func (ad *TweetHandler) DeleteComments(c *gin.Context) {
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+	comment_id := c.Query("commentid")
+	commentid, err := strconv.Atoi(comment_id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error in conversion", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	errs := ad.GRPC_Client.DeleteComments(id, commentid)
+	if errs != nil {
+		errres := response.ClientResponse(http.StatusBadRequest, "error in delete the comments", nil, errs.Error())
+		c.JSON(http.StatusBadRequest, errres)
+		return
+	}
+
+	succesres := response.ClientResponse(http.StatusOK, "successfully deleted the comment", nil, nil)
+	c.JSON(http.StatusOK, succesres)
+
+}

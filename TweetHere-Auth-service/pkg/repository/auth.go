@@ -365,3 +365,12 @@ func (ot *authRepository) GetUserName(id int) (string, error) {
 	}
 	return name, nil
 }
+
+func (at *authRepository) UserData(id int) (models.UserData, error) {
+	var details models.UserData
+	err := at.DB.Raw("SELECT id,username,profile FROM users WHERE id = ?", id).Scan(&details).Error
+	if err != nil {
+		return models.UserData{}, errors.New("error in getting user data")
+	}
+	return details, nil
+}

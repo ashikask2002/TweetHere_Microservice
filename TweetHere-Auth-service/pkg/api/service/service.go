@@ -422,3 +422,17 @@ func (ad *AuthServer) FindUserName(ctx context.Context, req *pb.FindUserNameRequ
 		Name: res,
 	}, nil
 }
+
+func (ad *AuthServer) UserData(ctx context.Context, req *pb.UserDataRequest) (*pb.UserDataResponse, error) {
+	id := req.Userid
+	res, err := ad.authUseCase.UserData(int(id))
+
+	if err != nil {
+		return &pb.UserDataResponse{}, err
+	}
+	return &pb.UserDataResponse{
+		Userid:   int64(res.UserID),
+		Username: res.Username,
+		Profile:  res.Profile,
+	}, nil
+}

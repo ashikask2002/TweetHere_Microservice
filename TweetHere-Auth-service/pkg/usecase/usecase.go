@@ -482,3 +482,14 @@ func (ad *authUseCase) FindUserName(id int64) (string, error) {
 	}
 	return username, nil
 }
+
+func (ad *authUseCase) UserData(id int) (models.UserData, error) {
+	Id := id
+
+	details, err := ad.authRepository.UserData(Id)
+	if err != nil {
+		return models.UserData{}, err
+	}
+	return details, nil
+
+}
