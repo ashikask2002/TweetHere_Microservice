@@ -7,6 +7,7 @@ option go_package = "./pkg/pb/authh";
 service AuthService {
   rpc DoesUserExist(DoesUserExistRequest) returns(DoesUserExistResponse){};
   rpc FindUserName(FindUserNameRequest) returns(FindUserNameResponse){}
+  rpc UserData(UserDataRequest) returns(UserDataResponse){}
 }
 
 message DoesUserExistRequest{
@@ -22,4 +23,12 @@ message FindUserNameRequest{
 }
 message FindUserNameResponse{
     string name=1;
+}
+message UserDataRequest{
+    int64 userid=1;
+}
+message UserDataResponse{
+    int64 userid =1;
+    string username=2;
+    string profile=3;
 }

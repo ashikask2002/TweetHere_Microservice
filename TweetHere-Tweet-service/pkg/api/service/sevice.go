@@ -186,8 +186,50 @@ func (ad *TweetServer) RplyCommentPost(ctx context.Context, req *pb.RplyCommentP
 
 }
 
-// func (ad *TweetServer) GetComments(ctx context.Context, req *pb.GetCommentsRequest) (*pb.GetCommentsResponse, error) {
-//     postid := req.Postid
+func (ad *TweetServer) GetComments(ctx context.Context, req *pb.GetCommentsRequest) (*pb.GetCommentsResponse, error) {
+	postid := req.Postid
 
-// 	result ,err := ad.tweetUseCase.
-// }
+	result, err := ad.tweetUseCase.GetComments(int(postid))
+	if err != nil {
+		return &pb.GetCommentsResponse{}, err
+	}
+
+	var comments []*pb.CommentsResponse
+	for _, post := range result {
+		details := &pb.CommentsResponse{
+			Id:       int64(post.UserId),
+			Username: post.Username,
+			Profile:  post.Profile,
+			Comment:  post.Comment,
+			Time:     timestamppb.New(post.CreatedAt),
+		}
+		comments = append(comments, details)
+	}
+	return &pb.GetCommentsResponse{
+		Comentdetails: comments,
+	}, nil
+
+}
+
+func (ad *TweetServer) EditComments(ctx context.Context, req *pb.EditCommentsRequet) (*pb.EditCommentsResponse, error) {
+	id := req.Id
+	commentid := req.Commentid
+	comment := req.Comment
+
+	err := ad.tweetUseCase.EditComments(int(id), int(commentid), comment)
+	if err != nil {
+		return &pb.EditCommentsResponse{}, err
+	}
+	return &pb.EditCommentsResponse{}, nil
+}
+
+func (ad *TweetServer) DeleteComments(ctx context.Context, req *pb.DeleteCommentsRequest) (*pb.DeleteCommentsResponse, error) {
+	id := req.Id
+	commentid := req.Commentid
+
+	err := ad.tweetUseCase.DeleteComments(int(id), int(commentid))
+	if err != nil {
+		return &pb.DeleteCommentsResponse{}, err
+	}
+	return &pb.DeleteCommentsResponse{}, nil
+}

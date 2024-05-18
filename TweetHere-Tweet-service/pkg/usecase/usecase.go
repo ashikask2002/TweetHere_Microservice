@@ -248,7 +248,69 @@ func (ad *tweetUseCase) RplyCommentPost(id int, postid int, comment string, pare
 	return nil
 }
 
-// func (ad *tweetUseCase) GetComments(postid int)([]models.CommentsResponse,error){
+func (ad *tweetUseCase) GetComments(postid int) ([]models.CommentsResponse, error) {
+	postexist := ad.tweetRepository.PostExist(postid)
+	if !postexist {
+		return []models.CommentsResponse{}, errors.New("this post is doesnt exist")
+	}
+
+	details, err := ad.tweetRepository.GetComments(postid)
+	if err != nil {
+		return []models.CommentsResponse{}, err
+	}
+	var comments []models.CommentsResponse
 	
-// 	details,err := ad.tweetRepository.G
-// }
+
+	for _, post := range details {
+		userdata, err := ad.authRepository.UserData(post.UserId)
+		if err != nil {
+			return []models.CommentsResponse{}, err
+		}
+		commentt := models.CommentsResponse{
+			UserId:    userdata.UserID,
+			Username:  userdata.Username,
+			Profile:   userdata.Profile,
+			Comment:   post.Comment,
+			CreatedAt: post.CreatedAt,
+		}
+		comments = append(comments, commentt)
+	}
+	return comments, nil
+}
+
+func (ad *tweetUseCase) EditComments(id int, commentid int, comment string) error {
+	userexist, _ := ad.authRepository.DoesUserExist(int64(id))
+	if !userexist {
+		return errors.New("user is not exist")
+	}
+	user, _ := ad.tweetRepository.FindUserByComment(commentid)
+
+	if id == user {
+		err := ad.tweetRepository.EditComments(commentid, comment)
+		if err != nil {
+			return err
+		}
+		return nil
+	} else {
+		return errors.New("this is not your comment")
+	}
+
+}
+
+func (ad *tweetUseCase) DeleteComments(id int, commentid int) error {
+	userexist, _ := ad.authRepository.DoesUserExist(int64(id))
+	if !userexist {
+		return errors.New("user is not exist")
+	}
+	user, _ := ad.tweetRepository.FindUserByComment(commentid)
+
+	if id == user {
+		errr := ad.tweetRepository.DeleteComments(commentid)
+		if errr != nil {
+			return errr
+		}
+		return nil
+	} else {
+		return errors.New("this is not your comment")
+	}
+}

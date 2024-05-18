@@ -221,3 +221,41 @@ func (th *tweetRepository) RplyCommentPost(userid int, postid int, comment strin
 
 	return nil
 }
+
+func (th *tweetRepository) FindUserByComment(commentid int) (int, error) {
+	var comment domain.Comment
+
+	if err := th.DB.Model(&domain.Comment{}).Where("id = ?", commentid).First(&comment).Error; err != nil {
+		return 0, fmt.Errorf("failed to find comment: %v", err)
+	}
+
+	return int(comment.UserID), nil
+}
+
+func (th *tweetRepository) EditComments(commentid int, comment string) error {
+
+	if err := th.DB.Model(&domain.Comment{}).Where("id = ?", commentid).Update("comment_text", comment).Error; err != nil {
+		return fmt.Errorf("failed to update comment: %v", err)
+	}
+
+	return nil
+}
+
+func (th *tweetRepository) DeleteComments(commentid int) error {
+	// Perform the delete query
+	if err := th.DB.Delete(&domain.Comment{}, commentid).Error; err != nil {
+		return fmt.Errorf("failed to delete comment: %v", err)
+	}
+
+	return nil
+}
+
+func (th *tweetRepository) GetComments(postid int) ([]models.CommentsResponse, error) {
+	var comments []models.CommentsResponse
+
+	err := th.DB.Raw("SELECT id,user_id,comment_text,created_at FROM comments WHERE post_id = ?", postid).Scan(&comments).Error
+	if err != nil {
+		return []models.CommentsResponse{}, err
+	}
+	return comments, nil
+}

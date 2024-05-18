@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"tweet-service/pkg/config"
 	pb "tweet-service/pkg/pb/authh"
+	"tweet-service/pkg/utils/models"
 
 	"google.golang.org/grpc"
 )
@@ -45,4 +46,17 @@ func (au *authClient) FindUserName(id int64) (string, error) {
 		return "", err
 	}
 	return res.Name, nil
+}
+func (au *authClient) UserData(userid int) (models.UserData, error) {
+	res, err := au.Client.UserData(context.Background(), &pb.UserDataRequest{
+		Userid: int64(userid),
+	})
+	if err != nil {
+		return models.UserData{}, err
+	}
+	return models.UserData{
+		UserID:   int(res.Userid),
+		Username: res.Username,
+		Profile:  res.Profile,
+	}, nil
 }

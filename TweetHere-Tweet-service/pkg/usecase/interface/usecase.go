@@ -15,5 +15,7 @@ type TweetUseCase interface {
 	UnSavePost(id int, postid int) error
 	CommentPost(id int, postid int, comment string) error
 	RplyCommentPost(id int, postid int, comment string, parentid int) error
-	// GetComments(postid int) ([]models.CommentsResponse, error)
+	GetComments(postid int) ([]models.CommentsResponse, error)
+	EditComments(id int, commentid int, comment string) error
+	DeleteComments(id int, commentid int) error
 }

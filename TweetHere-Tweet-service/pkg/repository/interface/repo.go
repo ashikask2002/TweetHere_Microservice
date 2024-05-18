@@ -14,6 +14,9 @@ type TweetRepository interface {
 	SavePost(id int, postid int) error
 	UnSavePost(id int, postid int) error
 	CommentPost(id int, postid int, comment string) error
-	RplyCommentPost(id int,postid int, comment string,parentid int)error
-	// GetComments(postid int)
+	RplyCommentPost(id int, postid int, comment string, parentid int) error
+	GetComments(postid int)([]models.CommentsResponse,error)
+	EditComments(commentid int, comment string) error
+	FindUserByComment(commentid int) (int, error)
+	DeleteComments(commentid int) error
 }
