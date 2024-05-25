@@ -60,7 +60,7 @@ func (ad *AuthServer) UserSignup(ctx context.Context, req *pb.UserSignupRequest)
 
 	data, err := ad.authUseCase.UserSignup(userSignUp)
 	if err != nil {
-		return &pb.UserSignupResponse{}, errors.New("error in signing up")
+		return &pb.UserSignupResponse{}, err
 	}
 	userDetials := pb.UserResponse{
 		Info: &pb.UserInfo{
@@ -123,7 +123,7 @@ func (ad *AuthServer) UserUpdateProfile(ctx context.Context, user *pb.UserUpdate
 
 	data, err := ad.authUseCase.UserUpdateProfile(userdetails, int(id))
 	if err != nil {
-		return &pb.UserUpdateProfileResponse{}, errors.New("error happened in Auth service")
+		return &pb.UserUpdateProfileResponse{}, err
 	}
 
 	userdetailsresponse := pb.UserUpdateProfileResponse{
@@ -145,7 +145,7 @@ func (ad *AuthServer) GetUser(ctx context.Context, page *pb.GetUserRequest) (*pb
 
 	users, err := ad.authUseCase.GetUser(int(paage))
 	if err != nil {
-		return &pb.GetUserResponse{}, errors.New("problem in gettind userdetails")
+		return &pb.GetUserResponse{}, err
 	}
 
 	var userdetails []*pb.UserDetailsAtAdmin
@@ -179,7 +179,7 @@ func (ad *AuthServer) BlockUser(ctx context.Context, req *pb.BlockUserRequest) (
 		return &pb.BlockUserResponse{
 			Succes: false,
 			Error:  "error happened while blocking",
-		}, nil
+		}, err
 	}
 
 	return &pb.BlockUserResponse{
@@ -197,7 +197,7 @@ func (ad *AuthServer) UnBlockUser(ctx context.Context, req *pb.UnBlockUserReques
 		return &pb.UnBlockUserResponse{
 			Succces: false,
 			Error:   "error happened while blocking",
-		}, nil
+		}, err
 	}
 
 	return &pb.UnBlockUserResponse{
@@ -216,7 +216,7 @@ func (ad *AuthServer) ChangePassword(ctx context.Context, req *pb.ChangePassword
 	if err != nil {
 		return &pb.ChangePasswordResponse{
 			Error: err.Error(),
-		}, nil
+		}, err
 	}
 
 	return &pb.ChangePasswordResponse{}, nil
@@ -273,7 +273,7 @@ func (us *AuthServer) OtpVerification(ctx context.Context, req *pb.OtpVerificati
 		return &pb.OtpVerificationResponse{
 			Status: 400,
 			Error:  err.Error(),
-		}, nil
+		}, err
 	}
 
 	return &pb.OtpVerificationResponse{

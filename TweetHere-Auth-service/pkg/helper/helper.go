@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"regexp"
 	"time"
+	"unicode"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -195,4 +196,20 @@ func AddImageToAwsS3(file []byte, filename string) (string, error) {
 
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, filename)
 	return url, nil
+}
+
+func IsValidEmail(email string) bool {
+	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	regex := regexp.MustCompile(pattern)
+	value := regex.MatchString(email)
+	return value
+}
+
+func ValidateAlphabets(data string) (bool, error) {
+	for _, char := range data {
+		if !unicode.IsLetter(char) {
+			return false, errors.New("data contains non-alphabetic characters")
+		}
+	}
+	return true, nil
 }

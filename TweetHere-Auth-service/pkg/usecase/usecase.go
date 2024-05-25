@@ -74,8 +74,18 @@ func (ad *authUseCase) UserSignup(user models.UserSignup) (*domain.TokenUser, er
 	if err != nil {
 		return &domain.TokenUser{}, errors.New("error with server")
 	}
+
 	if email != nil {
 		return &domain.TokenUser{}, errors.New("user with this email already exist")
+	}
+	emaill := helper.IsValidEmail(user.Email)
+	if !emaill {
+		return &domain.TokenUser{}, errors.New("email not in correct format")
+	}
+
+	phonee := helper.PhoneValidation(user.Phone)
+	if !phonee {
+		return &domain.TokenUser{}, errors.New("phone number are not in correct format")
 	}
 	hashedpassword, err := helper.PasswordHash(user.Password)
 	if err != nil {
@@ -98,6 +108,10 @@ func (ad *authUseCase) UserSignup(user models.UserSignup) (*domain.TokenUser, er
 }
 
 func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, error) {
+	emaill := helper.IsValidEmail(user.Email)
+	if !emaill {
+		return &domain.TokenUser{}, errors.New("email not in correct format")
+	}
 	email, err := ad.authRepository.ChekUserExistByEmail(user.Email)
 	if err != nil {
 		return &domain.TokenUser{}, errors.New("error in email checking part")
@@ -136,6 +150,15 @@ func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, erro
 
 func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (models.UserProfileResponse, error) {
 	fmt.Println("userrnnnnnssss", id)
+	emaill := helper.IsValidEmail(user.Email)
+	if !emaill {
+		return models.UserProfileResponse{}, errors.New("email not in correct format")
+	}
+
+	phnn := helper.PhoneValidation(user.Phone)
+	if !phnn{
+		return models.UserProfileResponse{},errors.New("phone not in correct format")
+	}
 
 	userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
 
