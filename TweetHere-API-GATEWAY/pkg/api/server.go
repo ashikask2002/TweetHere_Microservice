@@ -12,7 +12,7 @@ type ServerHttp struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler) *ServerHttp {
+func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler, chatHandler *handler.ChatHandler) *ServerHttp {
 	router := gin.New()
 	router.Use(gin.Logger())
 
@@ -39,6 +39,7 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 			usermanagement.GET("/followers", authHandler.Followers)
 			usermanagement.GET("/followings", authHandler.Followings)
 			usermanagement.POST("/profilepic", authHandler.UploadProfilepic)
+
 			usermanagement.POST("/addpost", tweetHandler.AddTweet)
 			usermanagement.GET("/getourpost", tweetHandler.GetOurTweet)
 			usermanagement.GET("/getotherspost", tweetHandler.GetOthersTweet)
@@ -60,6 +61,12 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 			adminmanagement.PATCH("/block", authHandler.BlockUser)
 			adminmanagement.PATCH("/unblock", authHandler.UnBlockUser)
 
+		}
+
+		chatmanagement := router.Group("/chat")
+		{
+			chatmanagement.GET("", chatHandler.FriendMessage)
+			chatmanagement.GET("message",chatHandler.GetChat)
 		}
 	}
 

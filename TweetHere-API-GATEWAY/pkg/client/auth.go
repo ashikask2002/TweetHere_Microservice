@@ -120,7 +120,7 @@ func (ad *authClient) UserUpdateProfile(userdetails models.UserProfile, id int) 
 		Id: int64(id),
 	})
 	if err != nil {
-		return models.UserProfileResponse{}, errors.New("error in adding user profile")
+		return models.UserProfileResponse{}, err
 	}
 
 	return models.UserProfileResponse{

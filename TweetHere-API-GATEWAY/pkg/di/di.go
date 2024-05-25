@@ -14,6 +14,9 @@ func InitailizeAPI(cfg config.Config) (*server.ServerHttp, error) {
 	tweetClient := client.NewTweetClient(cfg)
 	tweetHandler := handler.NewTweetHandler(tweetClient)
 
-	serverHTTP := server.NewServerHTTP(authHandler, tweetHandler)
+	chatClient := client.NewChatClient(cfg)
+	chatHandler := handler.NewChatHandler(chatClient)
+
+	serverHTTP := server.NewServerHTTP(authHandler, tweetHandler, chatHandler)
 	return serverHTTP, nil
 }

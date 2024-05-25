@@ -6,3 +6,6 @@ proto:
 
 prototweet:
 	protoc --go_out=. --go-grpc_out=. ./pkg/pb/tweet/tweet.proto 
+
+protochat:
+	protoc --go_out=. --go-grpc_out=. ./pkg/pb/chat/chat.proto

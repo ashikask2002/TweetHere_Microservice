@@ -7,11 +7,14 @@ import (
 type Config struct {
 	Port        string `mapstructure:"PORT"`
 	AdminSvcUrl string `mapstructure:"ADMIN_SVC_URL"`
-	TweeSvcUrl string `mapstructure:"TWEET_SVC_URL"`
+	TweeSvcUrl  string `mapstructure:"TWEET_SVC_URL"`
+	ChatSvcUrl  string `mapstructure:"CHAT_SVC_URL"`
+	KafkaPort   string `mapstructure:"KAFKA_PORT"`
+	KafkaTpic   string `mapstructure:"KAFKA_TOPIC"`
 }
 
 var envs = []string{
-	"PORT", "ADMIN_SVC_URL","TWEET_SVC_URL",
+	"PORT", "ADMIN_SVC_URL", "TWEET_SVC_URL", "CHAT_SVC_URL", "KAFKA_PORT", "KAFKA_TOPIC",
 }
 
 // func LoadConfig() (Config, error) {
