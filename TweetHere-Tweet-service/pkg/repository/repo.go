@@ -259,3 +259,13 @@ func (th *tweetRepository) GetComments(postid int) ([]models.CommentsResponse, e
 	}
 	return comments, nil
 }
+
+func (th *tweetRepository) GetPostedUserID(id int) (int, error) {
+
+	var idd int
+	err := th.DB.Raw("select user_id from posts where id = ?", id).Scan(&idd).Error
+	if err != nil {
+		return 0, err
+	}
+	return idd, nil
+}

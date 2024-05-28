@@ -17,10 +17,12 @@ type Config struct {
 	REGION                string `mapstructure:"REGION"`
 	AWS_ACCESS_KEY_ID     string `mapstructure:"AWS_ACCESS_KEY_ID"`
 	AWS_SECRET_ACCESS_KEY string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
+	KafkaPort             string `mapstructure:"KAFKA_PORT"`
+	KafkaTpic             string `mapstructure:"KAFKA_TOPIC"`
 }
 
 var envs = []string{
-	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "PORT", "AUTH_SVC_URL",
+	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "PORT", "AUTH_SVC_URL", "KAFKA_PORT", "KAFKA_TOPIC",
 }
 
 func LoadConfig() (Config, error) {

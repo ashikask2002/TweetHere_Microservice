@@ -42,3 +42,4 @@ func AddImageToAwsS3(file []byte, filename string) (string, error) {
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, filename)
 	return url, nil
 }
+

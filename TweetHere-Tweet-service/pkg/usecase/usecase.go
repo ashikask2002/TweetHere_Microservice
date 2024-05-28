@@ -156,6 +156,22 @@ func (ad *tweetUseCase) LikePost(id int, postid int) error {
 	if err != nil {
 		return err
 	}
+
+	userdata, err := ad.authRepository.UserData(id)
+	if err != nil {
+		return err
+	}
+	postedUserID, errr := ad.tweetRepository.GetPostedUserID(postid)
+	if errr != nil {
+		return err
+	}
+	msg := fmt.Sprintf("%s liked your postid %d", userdata.Username, postid)
+	helper.SendNotification(models.Notification{
+		UserID:   postedUserID,
+		SenderID: id,
+		PostID:   postid,
+	}, []byte(msg))
+
 	return nil
 }
 
@@ -259,7 +275,6 @@ func (ad *tweetUseCase) GetComments(postid int) ([]models.CommentsResponse, erro
 		return []models.CommentsResponse{}, err
 	}
 	var comments []models.CommentsResponse
-	
 
 	for _, post := range details {
 		userdata, err := ad.authRepository.UserData(post.UserId)
