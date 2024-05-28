@@ -12,7 +12,7 @@ type ServerHttp struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler, chatHandler *handler.ChatHandler) *ServerHttp {
+func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler, chatHandler *handler.ChatHandler,notihandler *handler.NotificationHandler) *ServerHttp {
 	router := gin.New()
 	router.Use(gin.Logger())
 
@@ -67,6 +67,11 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 		{
 			chatmanagement.GET("", chatHandler.FriendMessage)
 			chatmanagement.GET("message",chatHandler.GetChat)
+		}
+
+		notificationmanagement := router.Group("/noti")
+		{
+			notificationmanagement.GET("",notihandler.GetNotification)
 		}
 	}
 

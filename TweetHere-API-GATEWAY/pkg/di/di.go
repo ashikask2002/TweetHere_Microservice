@@ -17,6 +17,9 @@ func InitailizeAPI(cfg config.Config) (*server.ServerHttp, error) {
 	chatClient := client.NewChatClient(cfg)
 	chatHandler := handler.NewChatHandler(chatClient)
 
-	serverHTTP := server.NewServerHTTP(authHandler, tweetHandler, chatHandler)
+	noticlient := client.NewNotificationClient(cfg)
+	notihandler := handler.NewNotificationHandler(noticlient)
+
+	serverHTTP := server.NewServerHTTP(authHandler, tweetHandler, chatHandler, notihandler)
 	return serverHTTP, nil
 }

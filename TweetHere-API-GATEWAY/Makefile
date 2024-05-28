@@ -9,3 +9,6 @@ prototweet:
 
 protochat:
 	protoc --go_out=. --go-grpc_out=. ./pkg/pb/chat/chat.proto
+
+protonoti:
+	protoc --go_out=. --go-grpc_out=. ./pkg/pb/noti/noti.proto
