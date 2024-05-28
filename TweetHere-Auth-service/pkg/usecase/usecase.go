@@ -156,8 +156,8 @@ func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (model
 	}
 
 	phnn := helper.PhoneValidation(user.Phone)
-	if !phnn{
-		return models.UserProfileResponse{},errors.New("phone not in correct format")
+	if !phnn {
+		return models.UserProfileResponse{}, errors.New("phone not in correct format")
 	}
 
 	userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
@@ -510,6 +510,7 @@ func (ad *authUseCase) UserData(id int) (models.UserData, error) {
 	Id := id
 
 	details, err := ad.authRepository.UserData(Id)
+	fmt.Println("cccccccccc", details.ID)
 	if err != nil {
 		return models.UserData{}, err
 	}

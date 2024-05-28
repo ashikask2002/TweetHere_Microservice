@@ -117,7 +117,7 @@ type VerifyData struct {
 }
 
 type UserData struct {
-	UserID   int    `json:"user_id"`
+	ID       uint   `json:"id"`
 	Username string `json:"username"`
 	Profile  string `json:"profile"`
 }

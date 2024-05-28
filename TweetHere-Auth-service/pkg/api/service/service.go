@@ -431,7 +431,7 @@ func (ad *AuthServer) UserData(ctx context.Context, req *pb.UserDataRequest) (*p
 		return &pb.UserDataResponse{}, err
 	}
 	return &pb.UserDataResponse{
-		Userid:   int64(res.UserID),
+		Userid:   int64(res.ID),
 		Username: res.Username,
 		Profile:  res.Profile,
 	}, nil
