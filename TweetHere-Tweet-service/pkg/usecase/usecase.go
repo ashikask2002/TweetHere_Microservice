@@ -243,6 +243,21 @@ func (ad *tweetUseCase) CommentPost(id int, postid int, comment string) error {
 	if err != nil {
 		return err
 	}
+
+	userdata, err := ad.authRepository.UserData(id)
+	if err != nil {
+		return err
+	}
+	postedUserID, errr := ad.tweetRepository.GetPostedUserID(postid)
+	if errr != nil {
+		return err
+	}
+	msg := fmt.Sprintf("%s Commented your post %d comment: %s", userdata.Username, postid, comment)
+	helper.SendNotification(models.Notification{
+		UserID:   postedUserID,
+		SenderID: id,
+		PostID:   postid,
+	}, []byte(msg))
 	return nil
 }
 
