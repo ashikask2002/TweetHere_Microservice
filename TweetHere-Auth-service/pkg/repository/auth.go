@@ -106,6 +106,72 @@ func (ad *authRepository) UserUpdateProfile(user models.UserProfile, id int) (mo
 	return userdetails, nil
 }
 
+
+func (ur *authRepository) UserDetails(userID int) (models.UserProfileResponse, error) {
+	var userDetails models.UserProfileResponse
+	err := ur.DB.Raw("SELECT firstname, lastname, username,phone,email,date_of_birth,profile,bio  FROM users WHERE id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Username, &userDetails.Phone, &userDetails.Email, &userDetails.DateOfBirth, &userDetails.Profile, &userDetails.Bio)
+	if err != nil {
+		fmt.Println("Error retrieving user details:", err)
+		return models.UserProfileResponse{}, err
+	}
+	return userDetails, nil
+}
+
+
+func (ur *authRepository) UpdateFirstName(firstname string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET firstname= ? WHERE id = ?", firstname, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) UpdateLastName(lastname string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET lastname= ? WHERE id = ?", lastname, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) UpdateUserName(username string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET username= ? WHERE id = ?", username, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) UpdateDOB(dob string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET date_of_birth = ? WHERE id = ?", dob, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) UpdateUserEmail(email string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET email= ? WHERE id = ?", email, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ur *authRepository) UpdateBIO(bio string, userID int) error {
+	err := ur.DB.Exec("UPDATE users SET bio= ? WHERE id = ?", bio, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
+
+
+
+
+
 func (ad *authRepository) UpdateBlockUserByID(user domain.User) error {
 	err := ad.DB.Exec("update users set is_blocked = ? where id = ?", user.IsBlocked, user.ID).Error
 	if err != nil {
@@ -220,6 +286,13 @@ func (ur *authRepository) VerifyOTP(email, otp string) (bool, error) {
 func (ad *authRepository) CheckUserAvailability(userid int) bool {
 	var count int
 	if err := ad.DB.Raw("SELECT COUNT(*) FROM users WHERE id=?", userid).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func (ad *authRepository) CheckEmail(email string) bool {
+	var count int
+	if err := ad.DB.Raw("SELECT COUNT(*) FROM users WHERE email=?", email).Scan(&count).Error; err != nil {
 		return false
 	}
 	return count > 0

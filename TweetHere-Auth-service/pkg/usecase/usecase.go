@@ -155,17 +155,42 @@ func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (model
 		return models.UserProfileResponse{}, errors.New("email not in correct format")
 	}
 
-	phnn := helper.PhoneValidation(user.Phone)
-	if !phnn {
-		return models.UserProfileResponse{}, errors.New("phone not in correct format")
+	// phnn := helper.PhoneValidation(user.Phone)
+	// if !phnn {
+	// 	return models.UserProfileResponse{}, errors.New("phone not in correct format")
+	// }
+
+	// userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
+
+	// if err != nil {
+	// 	return models.UserProfileResponse{}, errors.New("error happened while profileupdate")
+	// }
+
+	if user.Firstname != "" {
+		ad.authRepository.UpdateFirstName(user.Firstname, id)
+	}
+	if user.Lastname != "" {
+		ad.authRepository.UpdateLastName(user.Lastname, id)
+	}
+	if user.Username != "" {
+		ad.authRepository.UpdateUserName(user.Username, id)
+
+	}
+	if user.Email != "" {
+		ok := ad.authRepository.CheckEmail(user.Email)
+		if ok {
+			return models.UserProfileResponse{}, errors.New("email already in use")
+		}
+		ad.authRepository.UpdateUserEmail(user.Email, id)
+	}
+	if user.DateOfBirth != "" {
+		ad.authRepository.UpdateDOB(user.DateOfBirth, id)
 	}
 
-	userdetails, err := ad.authRepository.UserUpdateProfile(user, id)
-
-	if err != nil {
-		return models.UserProfileResponse{}, errors.New("error happened while profileupdate")
+	if user.Bio != "" {
+		ad.authRepository.UpdateBIO(user.Bio, id)
 	}
-	return userdetails, nil
+	return ad.authRepository.UserDetails(id)
 }
 
 func (ad *authUseCase) GetUser(page int) ([]models.UserDetails, error) {

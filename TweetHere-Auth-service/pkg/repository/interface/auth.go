@@ -39,4 +39,12 @@ type AuthRepository interface {
 	UploadProfilepic(id int,url string)error
 	GetUserName(id int)(string,error)
 	UserData(id int)(models.UserData,error)
+	UpdateFirstName(firstname string, userID int) error 
+	UpdateLastName(lastname string, userID int) error
+	UpdateUserName(username string, userID int) error
+	UpdateDOB(dob string, userID int) error
+	UpdateUserEmail(email string, userID int) error
+	UpdateBIO(bio string, userID int) error
+	CheckEmail(email string) bool
+	UserDetails(userID int) (models.UserProfileResponse, error)
 }
