@@ -267,7 +267,7 @@ func (ad *authClient) FollowReq(id int, userid int) error {
 		FollowingUser: int64(userid),
 	})
 	if err != nil {
-		return errors.New("error in followrequest ")
+		return err
 	}
 	return nil
 }
@@ -278,7 +278,7 @@ func (ad *authClient) AcceptFollowreq(id int, userid int) error {
 		FollowingUser: int64(userid),
 	})
 	if err != nil {
-		return errors.New("error in accepting follower")
+		return err
 	}
 	return nil
 }

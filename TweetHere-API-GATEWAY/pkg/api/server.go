@@ -12,9 +12,16 @@ type ServerHttp struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler, chatHandler *handler.ChatHandler,notihandler *handler.NotificationHandler) *ServerHttp {
+func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.TweetHandler, chatHandler *handler.ChatHandler, notihandler *handler.NotificationHandler, videocallHandler *handler.VideoCallHandler) *ServerHttp {
 	router := gin.New()
 	router.Use(gin.Logger())
+
+	router.Static("/static", "./static")
+	router.LoadHTMLGlob("template/*")
+
+	router.GET("/exit", videocallHandler.ExitPage)
+	router.GET("/error", videocallHandler.ErrorPage)
+	router.GET("/index", videocallHandler.IndexedPage)
 
 	router.POST("/admin/login", authHandler.LoginHandler)
 
@@ -66,12 +73,12 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 		chatmanagement := router.Group("/chat")
 		{
 			chatmanagement.GET("", chatHandler.FriendMessage)
-			chatmanagement.GET("message",chatHandler.GetChat)
+			chatmanagement.GET("message", chatHandler.GetChat)
 		}
 
 		notificationmanagement := router.Group("/noti")
 		{
-			notificationmanagement.GET("",notihandler.GetNotification)
+			notificationmanagement.GET("", notihandler.GetNotification)
 		}
 	}
 

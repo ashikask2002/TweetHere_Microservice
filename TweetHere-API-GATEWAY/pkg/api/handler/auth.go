@@ -225,6 +225,13 @@ func (ad *AuthHandler) FollowReq(c *gin.Context) {
 	userId := c.Query("id")
 	userID, _ := strconv.Atoi(userId)
 
+	if id == userID {
+		errs := response.ClientResponse(http.StatusBadRequest, "not allowed to send request yourself", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+
+	}
+
 	err := ad.GRPC_Client.FollowReq(id, userID)
 	if err != nil {
 		errores := response.ClientResponse(http.StatusBadRequest, "could not send the request", nil, err.Error())
