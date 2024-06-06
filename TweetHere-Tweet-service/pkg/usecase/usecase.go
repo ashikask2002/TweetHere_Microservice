@@ -117,6 +117,13 @@ func (ad *tweetUseCase) EditTweet(id int, tweetid int, description string) error
 	if !userexist {
 		return errors.New("user is not exist")
 	}
+	id2, errs := ad.tweetRepository.GetPostedUserID(id)
+	if errs != nil {
+		return errs
+	}
+	if id != id2 {
+		return errors.New("this is not your post")
+	}
 	err := ad.tweetRepository.EditTweet(id, tweetid, description)
 	if err != nil {
 		return err
@@ -133,6 +140,13 @@ func (ad *tweetUseCase) DeletePost(id int, postid int) error {
 	postexist := ad.tweetRepository.PostExist(postid)
 	if !postexist {
 		return errors.New("this post is doesnt exist")
+	}
+	id2, errr := ad.tweetRepository.GetPostedUserID(postid)
+	if errr != nil {
+		return errr
+	}
+	if id != id2 {
+		return errors.New("this is not your post")
 	}
 
 	err := ad.tweetRepository.DeletePost(id, postid)
@@ -270,6 +284,13 @@ func (ad *tweetUseCase) RplyCommentPost(id int, postid int, comment string, pare
 	postexist := ad.tweetRepository.PostExist(postid)
 	if !postexist {
 		return errors.New("this post is doesnt exist")
+	}
+	pid, errs := ad.tweetRepository.GetPostfromcomment(parentid)
+	if errs != nil {
+		return errs
+	}
+	if postid != pid {
+		return errors.New("rplying comment not from this post")
 	}
 
 	err := ad.tweetRepository.RplyCommentPost(id, postid, comment, parentid)

@@ -106,17 +106,15 @@ func (ad *authRepository) UserUpdateProfile(user models.UserProfile, id int) (mo
 	return userdetails, nil
 }
 
-
 func (ur *authRepository) UserDetails(userID int) (models.UserProfileResponse, error) {
 	var userDetails models.UserProfileResponse
-	err := ur.DB.Raw("SELECT firstname, lastname, username,phone,email,date_of_birth,profile,bio  FROM users WHERE id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Username, &userDetails.Phone, &userDetails.Email, &userDetails.DateOfBirth, &userDetails.Profile, &userDetails.Bio)
+	err := ur.DB.Raw("SELECT firstname, lastname, username,phone,email,date_of_birth,bio  FROM users WHERE id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Username, &userDetails.Phone, &userDetails.Email, &userDetails.DateOfBirth, &userDetails.Bio)
 	if err != nil {
 		fmt.Println("Error retrieving user details:", err)
 		return models.UserProfileResponse{}, err
 	}
 	return userDetails, nil
 }
-
 
 func (ur *authRepository) UpdateFirstName(firstname string, userID int) error {
 	err := ur.DB.Exec("UPDATE users SET firstname= ? WHERE id = ?", firstname, userID).Error
@@ -165,12 +163,6 @@ func (ur *authRepository) UpdateBIO(bio string, userID int) error {
 	}
 	return nil
 }
-
-
-
-
-
-
 
 func (ad *authRepository) UpdateBlockUserByID(user domain.User) error {
 	err := ad.DB.Exec("update users set is_blocked = ? where id = ?", user.IsBlocked, user.ID).Error

@@ -150,10 +150,6 @@ func (ad *authUseCase) UserLogin(user models.UserLogin) (*domain.TokenUser, erro
 
 func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (models.UserProfileResponse, error) {
 	fmt.Println("userrnnnnnssss", id)
-	emaill := helper.IsValidEmail(user.Email)
-	if !emaill {
-		return models.UserProfileResponse{}, errors.New("email not in correct format")
-	}
 
 	// phnn := helper.PhoneValidation(user.Phone)
 	// if !phnn {
@@ -176,20 +172,29 @@ func (ad *authUseCase) UserUpdateProfile(user models.UserProfile, id int) (model
 		ad.authRepository.UpdateUserName(user.Username, id)
 
 	}
+	fmt.Println("222222222")
 	if user.Email != "" {
+		fmt.Println("33333333")
 		ok := ad.authRepository.CheckEmail(user.Email)
 		if ok {
 			return models.UserProfileResponse{}, errors.New("email already in use")
 		}
+		emaill := helper.IsValidEmail(user.Email)
+		if !emaill {
+			return models.UserProfileResponse{}, errors.New("email not in correct format")
+		}
 		ad.authRepository.UpdateUserEmail(user.Email, id)
 	}
+	fmt.Println("4444444444")
 	if user.DateOfBirth != "" {
 		ad.authRepository.UpdateDOB(user.DateOfBirth, id)
 	}
+	fmt.Println("555555555")
 
 	if user.Bio != "" {
 		ad.authRepository.UpdateBIO(user.Bio, id)
 	}
+	fmt.Println("666666666")
 	return ad.authRepository.UserDetails(id)
 }
 
@@ -336,18 +341,23 @@ func (r *authUseCase) OtpVerification(email, otp string) (bool, error) {
 }
 
 func (ad *authUseCase) FollowReq(id int, userid int) error {
+	fmt.Println("111111")
 	userExist := ad.authRepository.CheckUserAvailability(id)
 	if !userExist {
 		return errors.New("user doesnt exist")
 	}
+	fmt.Println("2222222")
 	followuserExist := ad.authRepository.CheckUserAvailability(userid)
 	if !followuserExist {
 		return errors.New("user doesnt exist")
 	}
+	fmt.Println("3333333")
 	err := ad.authRepository.ExistFollowers(id, userid)
 	if err {
+		fmt.Println("5555")
 		return errors.New("request already exist")
 	}
+	fmt.Println("44444")
 	errs := ad.authRepository.FollowReq(id, userid)
 	if errs != nil {
 		return errs

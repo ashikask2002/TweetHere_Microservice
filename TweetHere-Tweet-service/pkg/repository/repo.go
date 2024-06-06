@@ -269,3 +269,12 @@ func (th *tweetRepository) GetPostedUserID(id int) (int, error) {
 	}
 	return idd, nil
 }
+
+func (th *tweetRepository) GetPostfromcomment(id int) (int, error) {
+	var idd int
+	err := th.DB.Raw("select post_id from comments where id = ?", id).Scan(&idd).Error
+	if err != nil {
+		return 0, err
+	}
+	return idd, nil
+}

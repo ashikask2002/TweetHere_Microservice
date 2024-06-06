@@ -20,4 +20,5 @@ type TweetRepository interface {
 	FindUserByComment(commentid int) (int, error)
 	DeleteComments(commentid int) error
 	GetPostedUserID(id int) (int, error)
+	GetPostfromcomment(id int) (int, error)
 }

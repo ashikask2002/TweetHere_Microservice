@@ -3,6 +3,7 @@ package handler
 import (
 	interfaces "TweetHere-API/pkg/client/interface"
 	"TweetHere-API/pkg/helper"
+	"TweetHere-API/pkg/logging"
 	"TweetHere-API/pkg/utils/models"
 	"TweetHere-API/pkg/utils/response"
 	"fmt"
@@ -78,14 +79,18 @@ func (ch *ChatHandler) FriendMessage(c *gin.Context) {
 }
 
 func (ch *ChatHandler) GetChat(c *gin.Context) {
+	logEntry := logging.GetLogger().WithField("context", "GetChatHandler")
+	logEntry.Info("Processing GetChat request")
 	var chatRequest models.ChatRequest
 	if err := c.ShouldBindJSON(&chatRequest); err != nil {
+		logEntry.WithError(err).Error("error in bindng")
 		errs := response.ClientResponse(http.StatusBadRequest, "details not in correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 	userid, exist := c.Get("id")
 	if !exist {
+		logEntry.Info("error getting userid")
 		errs := response.ClientResponse(http.StatusBadRequest, "user id not found in JWT claims", nil, "")
 		c.JSON(http.StatusBadRequest, errs)
 		return
@@ -97,10 +102,12 @@ func (ch *ChatHandler) GetChat(c *gin.Context) {
 	result, err := ch.GRPC_Client.GetChat(userID, chatRequest)
 
 	if err != nil {
+		logEntry.WithError(err).Error("Error in getting chat details")
 		errs := response.ClientResponse(http.StatusBadRequest, "Failed to get chat details", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
+	logEntry.Info("get chat successsfull")
 
 	succesres := response.ClientResponse(http.StatusOK, "successfully got all chat details", result, nil)
 	c.JSON(http.StatusOK, succesres)

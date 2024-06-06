@@ -1,3 +1,5 @@
 TweetHere-Tweet-service/.env
 TweetHere-Auth-service/.env
 TweetHere-API-GATEWAY/.env
+TweetHere-Chat-service/.env
+TweetHere-Notification-service/.env
