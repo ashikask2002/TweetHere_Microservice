@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.53.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.18.2
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.33.0

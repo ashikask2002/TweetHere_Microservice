@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"tweethere-chat/pkg/logging"
 	pb "tweethere-chat/pkg/pb/chat"
 	interfaces "tweethere-chat/pkg/usecase/interface"
 	"tweethere-chat/pkg/utils/models"
@@ -21,10 +22,14 @@ func NeChatServer(usecase interfaces.ChatUseCase) pb.ChatServiceServer {
 }
 
 func (ad *ChatServer) GetFriendChat(ctx context.Context, req *pb.GetFriendChatRequest) (*pb.GetFriendChatResponse, error) {
+	logEntry := logging.GetLogger().WithField("method", "GetFriendChat")
+	logEntry.Info("Processing GetFriendChat request with limit:", req.GetLimit(), "and offset:", req.GetOffSet())
 	ind, _ := time.LoadLocation("Asia/Kolkata")
 	fmt.Println("details is ", req)
 	result, err := ad.chatUseCase.GetFriendChat(req.UserID, req.FriendID, models.Pagination{Limit: req.Limit, OffSet: req.OffSet})
 	if err != nil {
+		logEntry.WithError(err).Errorf("Error getting friend chat ")
+
 		return nil, err
 	}
 	var finalResult []*pb.Message
