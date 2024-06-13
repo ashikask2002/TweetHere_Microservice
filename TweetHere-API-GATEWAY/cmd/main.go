@@ -1,11 +1,26 @@
 package main
 
 import (
+	_ "TweetHere-API/cmd/docs"
 	"TweetHere-API/pkg/config"
 	"TweetHere-API/pkg/di"
 	"TweetHere-API/pkg/logging"
 	"fmt"
+
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
 )
+
+// @title Go + Gin SocailMedia TweetHere
+// @version 1.0.0
+// @description Tweet Here is a social Media Platform
+// @contact.name API Support
+// @securityDefinitions.apikey BearerTokenAuth
+// @in headercd
+// @name Authorization
+// @host localhost:5000
+// @BasePath /
+// @query.collection.format multi
 
 func main() {
 

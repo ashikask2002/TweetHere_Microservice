@@ -12,3 +12,7 @@ protochat:
 
 protonoti:
 	protoc --go_out=. --go-grpc_out=. ./pkg/pb/noti/noti.proto
+
+swag:
+	swag init -g cmd/main.go -o ./cmd/docs
+

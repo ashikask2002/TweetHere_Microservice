@@ -6,6 +6,9 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	
 )
 
 type ServerHttp struct {
@@ -18,6 +21,8 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 
 	router.Static("/static", "./static")
 	router.LoadHTMLGlob("template/*")
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.GET("/exit", videocallHandler.ExitPage)
 	router.GET("/error", videocallHandler.ErrorPage)

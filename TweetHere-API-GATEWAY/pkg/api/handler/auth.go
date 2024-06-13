@@ -22,6 +22,15 @@ func NewAuthHandler(adminClient interfaces.AdminClient) *AuthHandler {
 	}
 }
 
+// @Summary		Admin Login
+// @Description	Login handler for Zsoxial admins
+// @Tags			Admin
+// @Accept 			json
+// @Produce 		json
+// @Param			adminDetails	body		models.AdminLogin	true	"Admin login details"
+// @Success			200		{object}	response.Response{}
+// @Failure			500		{object}	response.Response{}
+// @Router			/admin/login  [POST]
 func (ad *AuthHandler) LoginHandler(c *gin.Context) {
 
 	logEntry := logging.GetLogger().WithField("context", "LogginHandler")
@@ -48,8 +57,16 @@ func (ad *AuthHandler) LoginHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-//user side/////////////////////////////////
-
+// @Summary		User Sign Up
+// @Description	Sign up handler for new users
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			userDetails	body		models.UserSignup	true	"User sign up details"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/user/signup  [POST]
 func (ad *AuthHandler) UserSignUp(c *gin.Context) {
 	var userdetails models.UserSignup
 	logEntry := logging.GetLogger().WithField("context", "UserSignupHandler")
@@ -77,6 +94,16 @@ func (ad *AuthHandler) UserSignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, successres)
 }
 
+// @Summary		User Login
+// @Description	Login handler for users
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			userDetails	body		models.UserLogin	true	"User login details"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/user/login  [POST]
 func (ad *AuthHandler) UserLogin(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UserLoginHandler")
 	logEntry.Info("Processing user Login  request")
@@ -102,6 +129,16 @@ func (ad *AuthHandler) UserLogin(c *gin.Context) {
 
 }
 
+// @Summary		User Update Profile
+// @Description	Update profile handler for users
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			userDetails	body		models.UserProfile	true	"User profile details"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		502			{object}	response.Response{}
+// @Router			/users/profile  [PUT]
 func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UserUpdateProfileHandler")
 	logEntry.Info("Processing user UpdateProfile  request")

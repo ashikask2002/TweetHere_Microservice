@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: tweethere-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=4686
+      - POSTGRES_USER=postgres
+      # - PGDATA= /sub_folder
+    networks:
+      - tweethere_network
+    volumes:
+      - tweethere_volume2:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+
+  mongodb:
+    image: mongo
+    container_name: tweethere-mongodb
+    restart: on-failure
+    networks:
+      - tweethere_network
+    volumes:
+      - tweethere_volume:/data/db
+    ports:
+      - "27016:27017"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    networks:
+      - tweethere_network
+    container_name: zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_LOG_RETENTION_HOURS=168
+    networks:
+      - tweethere_network
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9094"
+      - "9091:9092"
+
+  api-gateway:
+    image: tweethereapi 
+    build: ./api-gateway/
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+    container_name: tweethereapi
+    networks:
+      - tweethere_network
+    ports:
+      - "5000:5000"
+
+  auth-services:
+    image: tweethereauth 
+    build: ./auth-service/
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+    container_name: tweethereauth
+    networks:
+      - tweethere_network
+    hostname: tweethereauth
+
+  chat-services:
+    image: tweetherechat
+    build: ./chat-service/
+    depends_on:
+      - mongodb
+      - kafka
+    restart: always
+    container_name: tweetherechat
+    networks:
+      - tweethere_network
+    hostname: tweetherechat
+
+  notification-service:
+    image: tweetherenoti 
+    build: ./noti-service/
+    depends_on:
+      - postgres
+      - kafka
+    restart: always
+    container_name: tweetherenoti
+    networks:
+      - tweethere_network
+    hostname: tweetherenoti
+
+  tweet-service:
+    image: tweetheretweet 
+    build: ./tweet-service/
+    depends_on:
+      - postgres
+      - kafka
+    restart: always
+    container_name: tweetheretweet
+    networks:
+      - tweethere_network
+    hostname: tweetheretweet
+
+networks:
+  tweethere_network:
+    driver: bridge
+
+volumes:
+  tweethere_volume: 
+    # driver: local
+  tweethere_volume2:
