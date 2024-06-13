@@ -35,16 +35,17 @@ func (c *chatusecase) MessageConsumer() {
 	consumer, err := sarama.NewConsumer([]string{cfg.KafkaPort}, configs)
 	if err != nil {
 		fmt.Println("Error creatig Kafka consumer:", err)
-		return
+		// return
 	}
 	defer consumer.Close()
 
 	partitionConsumer, err := consumer.ConsumePartition(cfg.KafkaTpic, 0, sarama.OffsetNewest)
 	if err != nil {
 		fmt.Println("Error creating partition consumer:", err)
-		return
+		// return
 	}
 	defer partitionConsumer.Close()
+
 	fmt.Println("Kafka consumer started")
 	for {
 		select {

@@ -8,7 +8,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=4686
       - POSTGRES_USER=postgres
-      # - PGDATA= /sub_folder
     networks:
       - tweethere_network
     volumes:
@@ -30,8 +29,10 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-      - ZOOKEEPER_TICK_TIME=2000
+      # - ZOOKEEPER_CLIENT_PORT=2181
+      # - ZOOKEEPER_TICK_TIME=2000
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000 
     networks:
       - tweethere_network
     container_name: zookeeper
@@ -39,25 +40,30 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
-      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-      - KAFKA_LOG_RETENTION_HOURS=168
+      # - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      # - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      # - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      # - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      # - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      # - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      # - KAFKA_LOG_RETENTION_HOURS=168
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     networks:
       - tweethere_network
     container_name: kafka
     depends_on:
       - zookeeper
-    ports:
-      - "9094:9094"
-      - "9091:9092"
+    # ports:
+    #   - "9094:9094"
+    #   - "9091:9092"
 
   api-gateway:
     image: tweethereapi 
-    build: ./api-gateway/
+    # build: ./api-gateway/
     restart: always
     depends_on:
       - postgres
@@ -70,7 +76,7 @@ services:
 
   auth-services:
     image: tweethereauth 
-    build: ./auth-service/
+    # build: ./auth-service/
     restart: always
     depends_on:
       - postgres
@@ -82,7 +88,7 @@ services:
 
   chat-services:
     image: tweetherechat
-    build: ./chat-service/
+    build: ./TweetHere-Chat-service
     depends_on:
       - mongodb
       - kafka
@@ -94,7 +100,7 @@ services:
 
   notification-service:
     image: tweetherenoti 
-    build: ./noti-service/
+    build: ./TweetHere-Notification-service
     depends_on:
       - postgres
       - kafka
@@ -106,7 +112,7 @@ services:
 
   tweet-service:
     image: tweetheretweet 
-    build: ./tweet-service/
+    # build: ./tweet-service/
     depends_on:
       - postgres
       - kafka

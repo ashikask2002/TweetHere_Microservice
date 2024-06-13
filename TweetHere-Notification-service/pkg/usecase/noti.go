@@ -36,14 +36,14 @@ func (c *notiUsecase) ConsumeNotification() {
 	consumer, err := sarama.NewConsumer([]string{cfg.KafkaPort}, configs)
 	if err != nil {
 		fmt.Println("error creating kafka consumer", err)
-		return
+		// return
 	}
 	defer consumer.Close()
 
 	partitionConsumer, err := consumer.ConsumePartition(cfg.KafkaTpic, 0, sarama.OffsetNewest)
 	if err != nil {
 		fmt.Println("error creating partition consumer", err)
-		return
+		// return
 	}
 	defer partitionConsumer.Close()
 	fmt.Println("kafka consumer started")
