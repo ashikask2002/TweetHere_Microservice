@@ -13,7 +13,7 @@ services:
     volumes:
       - tweethere_volume2:/var/lib/postgresql/data/
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
   mongodb:
     image: mongo
@@ -24,7 +24,7 @@ services:
     volumes:
       - tweethere_volume:/data/db
     ports:
-      - "27016:27017"
+      - "27017:27017"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -62,7 +62,7 @@ services:
     #   - "9091:9092"
 
   api-gateway:
-    image: tweethereapi 
+    image: ashikks123/tweethereapi 
     build: ./TweetHere-API-GATEWAY
     restart: always
     depends_on:
@@ -75,7 +75,7 @@ services:
       - "5000:5000"
 
   auth-services:
-    image: tweethereauth 
+    image: ashikks123/tweethereauth 
     build: ./TweetHere-Auth-service
     restart: always
     depends_on:
@@ -87,7 +87,7 @@ services:
     hostname: tweethereauth
 
   chat-services:
-    image: tweetherechat
+    image: ashikks123/tweetherechat
     build: ./TweetHere-Chat-service
     depends_on:
       - mongodb
@@ -99,7 +99,7 @@ services:
     hostname: tweetherechat
 
   notification-service:
-    image: tweetherenoti 
+    image: ashikks123/tweetherenoti 
     build: ./TweetHere-Notification-service
     depends_on:
       - postgres
@@ -111,7 +111,7 @@ services:
     hostname: tweetherenoti
 
   tweet-service:
-    image: tweetheretweet 
+    image: ashikks123/tweetheretweet 
     # build: ./tweet-service/
     depends_on:
       - postgres
