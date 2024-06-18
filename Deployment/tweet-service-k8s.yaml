@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tweethere-post-svc
+  namespace: tweethere
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tweet_service
+  template:
+    metadata:
+      labels: 
+        app: tweet_service
+    spec:
+      containers:
+      - image: ashikks123/tweetheretweet
+        name: post-svc-container
+        ports:
+        - containerPort: 50055
+        resources:
+          limits:
+            cpu: ".2"
+            memory: "250Mi"
+          requests:
+            cpu: ".1"
+            memory: "150Mi"
+        
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tweethere
+  name: post-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 50055
+    targetPort: 50055
+  selector:
+    app: tweet_service

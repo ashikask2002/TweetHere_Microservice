@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tweethere-notification-svc
+  namespace: tweethere
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification_service
+  template:
+    metadata:
+      labels: 
+        app: notification_service
+    spec:
+      containers:
+      - image: ashikks123/tweetherenoti
+        name: notification-svc-container
+        ports:
+        - containerPort: 50057
+        resources:
+          limits:
+            cpu: ".2"
+            memory: "250Mi"
+          requests:
+            cpu: ".1"
+            memory: "150Mi"
+        
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tweethere
+  name: tweethere-notification-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 50057
+    targetPort: 50057
+  selector:
+    app: notification_service

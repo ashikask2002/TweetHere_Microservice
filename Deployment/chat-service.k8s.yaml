@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tweethere-chat-svc
+  namespace: tweethere
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat_service
+  template:
+    metadata:
+      labels: 
+        app: chat_service
+    spec:
+      containers:
+      - image: ashikks123/tweetherechat
+        name: chat-svc-container
+        ports:
+        - containerPort: 50056
+        resources:
+          limits:
+            cpu: ".2"
+            memory: "250Mi"
+          requests:
+            cpu: ".1"
+            memory: "150Mi"
+        
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tweethere
+  name: tweethere-chat-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 50056
+    targetPort: 50056
+  selector:
+    app: chat_service

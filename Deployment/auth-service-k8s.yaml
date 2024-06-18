@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tweethere-auth-svc
+  namespace: tweethere
+spec:
+  selector:
+    matchLabels:
+      app: auth_service
+  template:
+    metadata:
+      labels:
+        app: auth_service
+    spec:
+      containers:
+        - image: ashikks123/tweethereauth 
+          name: auth-svc-container
+          ports:
+            - containerPort: 50054
+          resources:
+            limits:
+              memory: 212Mi
+              cpu: ".2"
+            requests:
+              memory: 150Mi
+              cpu: "0.1"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-services
+  namespace: tweethere
+spec: 
+  type: ClusterIP
+  ports:
+    - port: 50054
+      targetPort: 50054
+  selector:
+    app: auth_service
