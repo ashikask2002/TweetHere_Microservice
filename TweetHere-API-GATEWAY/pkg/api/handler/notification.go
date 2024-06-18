@@ -20,6 +20,20 @@ func NewNotificationHandler(notiClient interfaces.NotificationClient) *Notificat
 	}
 }
 
+// GetNotification godoc
+// @Summary Get Notifications
+// @Description Retrieves notifications for the logged-in user with pagination.
+// @Tags Notification
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id header int true "Logged-in User ID"
+// @Param limit query int false "Limit number of notifications to retrieve"
+// @Param offset query int false "Offset for pagination"
+// @Success 200 {object} response.Response{data=[]models.Notification} "Successfully retrieved notifications"
+// @Failure 400 {object} response.Response{} "Invalid request format or JWT claims missing"
+// @Failure 500 {object} response.Response{} "Server error occurred"
+// @Router /noti [get]
 func (ad *NotificationHandler) GetNotification(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetNotificationHandler")
 	logEntry.Info("Processing GetNotification request")

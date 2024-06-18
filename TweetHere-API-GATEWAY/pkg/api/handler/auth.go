@@ -167,6 +167,16 @@ func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, successres)
 }
 
+// @Summary		Get User Details
+// @Description	Retrieves user details for admin management
+// @Tags			Admin
+// @Accept			json
+// @Produce		json
+// @Param			page	query	int	true	"Page number for pagination"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admins/userdetails [GET]
 func (ad *AuthHandler) GetUser(c *gin.Context) {
 
 	logEntry := logging.GetLogger().WithField("context", "GetUserHandler")
@@ -196,6 +206,16 @@ func (ad *AuthHandler) GetUser(c *gin.Context) {
 
 }
 
+// @Summary		Block User
+// @Description	Blocks a user by ID
+// @Tags			Admin
+// @Accept			json
+// @Produce		json
+// @Param			id	query	string	true	"User ID to block"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admins/block [PATCH]
 func (ad *AuthHandler) BlockUser(c *gin.Context) {
 
 	logEntry := logging.GetLogger().WithField("context", "BlockUserHandler")
@@ -214,6 +234,16 @@ func (ad *AuthHandler) BlockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Unblock User
+// @Description	Unblocks a user by ID
+// @Tags			Admin
+// @Accept			json
+// @Produce		json
+// @Param			id	query	string	true	"User ID to unblock"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admins/unblock [PATCH]
 func (ad *AuthHandler) UnBlockUser(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "BlockUserHandler")
 	logEntry.Info("Processing UnblockUser  request")
@@ -232,6 +262,17 @@ func (ad *AuthHandler) UnBlockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Change Password
+// @Description	Changes the password of the logged-in user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"User ID"
+// @Param			password	body		models.ChangePassword	true	"New password details"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/changepassword [PATCH]
 func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "ChangePasswordUserHandler")
 	logEntry.Info("Processing ChangePassword  request")
@@ -263,6 +304,16 @@ func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 
 }
 
+// @Summary		Get User Details
+// @Description	Retrieves details of the logged-in user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"User ID"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/getyoudetails [GET]
 func (ad *AuthHandler) GetUserDetails(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetUserDetailsHandler")
 	logEntry.Info("Processing GetUserDetails  request")
@@ -283,6 +334,16 @@ func (ad *AuthHandler) GetUserDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		User OTP Login
+// @Description	Generates OTP for user login
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			userDetails	body		models.UserOTPLogin	true	"User OTP login details"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/user/otplogin [POST]
 func (uh *AuthHandler) UserOTPLogin(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UserOTPLoginHandler")
 	logEntry.Info("Processing UserOTPLogin  request")
@@ -307,6 +368,17 @@ func (uh *AuthHandler) UserOTPLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary		Send Follow Request
+// @Description	Sends a follow request to another user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"User ID to send follow request to"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/followreq [POST]
 func (ad *AuthHandler) FollowReq(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "FollowReqHandler")
 	logEntry.Info("Processing Follow  request")
@@ -337,6 +409,17 @@ func (ad *AuthHandler) FollowReq(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Accept Follow Request
+// @Description	Accepts a follow request from another user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"User ID to accept follow request from"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/acceptfollowreq [POST]
 func (ad *AuthHandler) AcceptFollowreq(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "AcceptFollowReqHandler")
 	logEntry.Info("Processing AcceptFollow  request")
@@ -357,6 +440,17 @@ func (ad *AuthHandler) AcceptFollowreq(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Unfollow User
+// @Description	Unfollows a user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"User ID to unfollow"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/unfollow [POST]
 func (ad *AuthHandler) Unfollow(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UnfollowRequestHandler	")
 	logEntry.Info("Processing AcceptFollow  request")
@@ -380,6 +474,16 @@ func (ad *AuthHandler) Unfollow(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Get Followers
+// @Description	Retrieves the followers of the logged-in user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/followers [GET]
 func (ad *AuthHandler) Followers(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "FollowersHandler	")
 	logEntry.Info("Processing show Followers  request")
@@ -398,6 +502,16 @@ func (ad *AuthHandler) Followers(c *gin.Context) {
 	c.JSON(http.StatusOK, successres)
 }
 
+// @Summary		Get Followings
+// @Description	Retrieves the users that the logged-in user is following
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Success		200		{object}	response.Response{}
+// @Failure		400		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/users/followings [GET]
 func (ad *AuthHandler) Followings(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "FollowersHandler	")
 	logEntry.Info("Processing show Followers  request")
@@ -416,6 +530,16 @@ func (ad *AuthHandler) Followings(c *gin.Context) {
 	c.JSON(http.StatusOK, successres)
 }
 
+// @Summary		Send OTP
+// @Description	Sends OTP to the provided phone number
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			phoneNumber	body		models.OTPData	true	"Phone number to send OTP to"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/sendotp [POST]
 func (ad *AuthHandler) SendOTP(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "SendOTPHandler")
 	logEntry.Info("Processing SendOTP request")
@@ -439,6 +563,16 @@ func (ad *AuthHandler) SendOTP(c *gin.Context) {
 
 }
 
+// @Summary		Verify OTP
+// @Description	Verifies the OTP provided by the user
+// @Tags			User
+// @Accept			json
+// @Produce		json
+// @Param			code	body		models.VerifyData	true	"Verification code received via OTP"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/verifyotp [POST]
 func (ad *AuthHandler) VerifyOTP(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "VerifyOTPHandler")
 	logEntry.Info("Processing VerifyOTP request")
@@ -463,6 +597,17 @@ func (ad *AuthHandler) VerifyOTP(c *gin.Context) {
 
 }
 
+// @Summary		Upload Profile Picture
+// @Description	Uploads profile picture for the logged-in user
+// @Tags			User
+// @Accept			multipart/form-data
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			files	formData	file	true	"Image file to upload"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/profilepic [POST]
 func (ad *AuthHandler) UploadProfilepic(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UpdateProfilePicHandler")
 	logEntry.Info("Processing UpdateProfilepic request")

@@ -63,7 +63,7 @@ services:
 
   api-gateway:
     image: tweethereapi 
-    # build: ./api-gateway/
+    build: ./TweetHere-API-GATEWAY
     restart: always
     depends_on:
       - postgres
@@ -76,7 +76,7 @@ services:
 
   auth-services:
     image: tweethereauth 
-    # build: ./auth-service/
+    build: ./TweetHere-Auth-service
     restart: always
     depends_on:
       - postgres

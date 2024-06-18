@@ -78,6 +78,18 @@ func (ch *ChatHandler) FriendMessage(c *gin.Context) {
 	}
 }
 
+// GetChat godoc
+// @Summary Get Chat
+// @Description Retrieves chat details based on the provided request.
+// @Tags Chat
+// @Accept  json
+// @Produce  json
+// @Security ApiKeyAuth
+// @Param id header int true "Logged-in User ID"
+// @Param chatRequest body models.ChatRequest true "Chat request details"
+// @Success 200 {object} response.Response{data=models.ChatDetails} "Successfully retrieved chat details"
+// @Failure 400 {object} response.Response{} "Invalid request format or JWT claims missing"
+// @Router /chat/message [post]
 func (ch *ChatHandler) GetChat(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetChatHandler")
 	logEntry.Info("Processing GetChat request")

@@ -21,6 +21,18 @@ func NewTweetHandler(tweetClient interfaces.TweetClient) *TweetHandler {
 	}
 }
 
+// @Summary		Add Tweet
+// @Description	Adds a new tweet with optional images
+// @Tags			Tweet
+// @Accept			multipart/form-data
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			discription	formData	string	true	"Tweet description"
+// @Param			files	formData	file	false	"Image file(s) to upload"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/addpost [POST]
 func (ad *TweetHandler) AddTweet(c *gin.Context) {
 	//  var postDetails models.PostDetails
 	logEntry := logging.GetLogger().WithField("context", "AddTweetHandler")
@@ -59,6 +71,16 @@ func (ad *TweetHandler) AddTweet(c *gin.Context) {
 
 }
 
+// @Summary		Get User's Posts
+// @Description	Retrieves all posts created by the logged-in user
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/getourpost [GET]
 func (ad *TweetHandler) GetOurTweet(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetOurTweetHandler")
 	logEntry.Info("Processing GetOurTweet request")
@@ -78,6 +100,16 @@ func (ad *TweetHandler) GetOurTweet(c *gin.Context) {
 
 }
 
+// @Summary		Get Other User's Posts
+// @Description	Retrieves all posts created by a specific user
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	query	int	true	"User ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/getotherspost [GET]
 func (ad *TweetHandler) GetOthersTweet(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetOthersTweetHandler")
 	logEntry.Info("Processing GetOthersTweet request")
@@ -103,6 +135,18 @@ func (ad *TweetHandler) GetOthersTweet(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Edit Tweet
+// @Description	Edits a user's tweet with a new description
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Tweet ID"
+// @Param			discription	query	string	true	"New tweet description"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/editpost [PATCH]
 func (ad *TweetHandler) EditTweet(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "EditTweetHandler")
 	logEntry.Info("Processing EditTweet request")
@@ -130,6 +174,17 @@ func (ad *TweetHandler) EditTweet(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Delete Post
+// @Description	Deletes a user's post
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/deletpost [DELETE]
 func (ad *TweetHandler) DeletePost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "DeleteHandler")
 	logEntry.Info("Processing DeletePost request")
@@ -158,6 +213,17 @@ func (ad *TweetHandler) DeletePost(c *gin.Context) {
 
 }
 
+// @Summary		Like Post
+// @Description	Allows a user to like a post
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/likepost [POST]
 func (ad *TweetHandler) LikePost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "LikePostHandler")
 	logEntry.Info("Processing LikePost request")
@@ -185,6 +251,17 @@ func (ad *TweetHandler) LikePost(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Unlike Post
+// @Description	Allows a user to unlike a post
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/unlikepost [POST]
 func (ad *TweetHandler) UnLikePost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UnLikePostHandler")
 	logEntry.Info("Processing UnLikePost request")
@@ -212,6 +289,17 @@ func (ad *TweetHandler) UnLikePost(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 }
 
+// @Summary		Save Post
+// @Description	Adds a post to bookmarks (saves it)
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/savepost [POST]
 func (ad *TweetHandler) SavePost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "SavePostHandler")
 	logEntry.Info("Processing SavePost request")
@@ -238,6 +326,17 @@ func (ad *TweetHandler) SavePost(c *gin.Context) {
 	c.JSON(http.StatusOK, succesre)
 }
 
+// @Summary		Unsave Post
+// @Description	Removes a post from bookmarks (unsaves it)
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/unsavepost [POST]
 func (ad *TweetHandler) UnSavePost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "UnSavePostHandler")
 	logEntry.Info("Processing UnSavePost request")
@@ -264,6 +363,19 @@ func (ad *TweetHandler) UnSavePost(c *gin.Context) {
 	c.JSON(http.StatusOK, sucsres)
 }
 
+// @Summary		Comment Post
+// @Description	Adds a comment to a post, optionally as a reply to another comment
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			id	query	int	true	"Post ID"
+// @Param			comment	query	string	true	"Comment content"
+// @Param			parentid	query	int	false	"Parent comment ID (for replying)"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/commentpost [POST]
 func (ad *TweetHandler) CommentPost(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "CommentPostHandler")
 	logEntry.Info("Processing CommentPost request")
@@ -313,6 +425,16 @@ func (ad *TweetHandler) CommentPost(c *gin.Context) {
 
 }
 
+// @Summary		Get Comments
+// @Description	Retrieves all comments for a specific post
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	query	int	true	"Post ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/getcomments [GET]
 func (ad *TweetHandler) GetComments(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "GetCommentsHandler")
 	logEntry.Info("Processing GetComments request")
@@ -337,6 +459,18 @@ func (ad *TweetHandler) GetComments(c *gin.Context) {
 
 }
 
+// @Summary		Edit Comment
+// @Description	Edits a specific comment
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			commentid	query	int	true	"Comment ID"
+// @Param			comment		query	string	true	"Updated comment text"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/editcomment [PUT]
 func (ad *TweetHandler) EditComments(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "EditCommentHandler")
 	logEntry.Info("Processing EditComment request")
@@ -365,6 +499,17 @@ func (ad *TweetHandler) EditComments(c *gin.Context) {
 
 }
 
+// @Summary		Delete Comment
+// @Description	Deletes a specific comment
+// @Tags			Tweet
+// @Accept			json
+// @Produce		json
+// @Param			id	header	int	true	"Logged-in User ID"
+// @Param			commentid	query	int	true	"Comment ID"
+// @Success		200			{object}	response.Response{}
+// @Failure		400			{object}	response.Response{}
+// @Failure		500			{object}	response.Response{}
+// @Router			/users/deletecomment [DELETE]
 func (ad *TweetHandler) DeleteComments(c *gin.Context) {
 	logEntry := logging.GetLogger().WithField("context", "DeleteCommentHandler")
 	logEntry.Info("Processing DeleteComment request")
