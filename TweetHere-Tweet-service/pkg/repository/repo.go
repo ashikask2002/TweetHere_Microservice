@@ -43,7 +43,7 @@ func (th *tweetRepository) UploadMedia(tid uint, url string) error {
 func (th *tweetRepository) GetOurTweet(uid int) ([]models.PostResponse, error) {
 	var userdetails []models.PostResponse
 
-	query := `SELECT user_id, description, media_url, created_at FROM posts WHERE user_id = ?`
+	query := `SELECT user_id, description, media_url,likes_count, comments_count, created_at FROM posts WHERE user_id = ?`
 
 	if err := th.DB.Raw(query, uid).Scan(&userdetails).Error; err != nil {
 		return nil, err
@@ -98,7 +98,13 @@ func (th *tweetRepository) LikePost(userID, postID int) error {
 	if err := th.DB.Create(&like).Error; err != nil {
 		return err
 	}
-
+	errs := th.DB.Exec(`UPDATE posts SET likes_count = likes_count + 1 WHERE id = ?`, postID).Error
+	fmt.Println("aaaaaaaaaaaaa")
+	if errs != nil {
+		fmt.Println("bbbbbbbbbb")
+		return errs
+	}
+	fmt.Println("ccccccccccccc")
 	return nil
 }
 
@@ -112,7 +118,10 @@ func (th *tweetRepository) UnLikePost(userID, postID int) error {
 		// User has not liked the post
 		return errors.New("user has not liked the post")
 	}
-
+	err := th.DB.Exec(`UPDATE posts SET likes_count = likes_count - 1 WHERE id = ?`, postID).Error
+	if err != nil {
+		return err
+	}
 	// Delete the like record
 	if err := th.DB.Where("user_id = ? AND post_id = ?", userID, postID).Delete(&domain.Like{}).Error; err != nil {
 		return err
@@ -183,6 +192,10 @@ func (th *tweetRepository) CommentPost(userid int, postid int, comment string) e
 	if err := th.DB.Create(&newComment).Error; err != nil {
 		return fmt.Errorf("failed to insert comment: %v", err)
 	}
+	errs := th.DB.Exec(`UPDATE posts SET comments_count = comments_count + 1 WHERE id = ?`, postid).Error
+	if errs != nil {
+		return errs
+	}
 
 	return nil
 }
@@ -217,6 +230,10 @@ func (th *tweetRepository) RplyCommentPost(userid int, postid int, comment strin
 
 	if err := th.DB.Create(&newComment).Error; err != nil {
 		return fmt.Errorf("failed to insert reply comment: %v", err)
+	}
+	errs := th.DB.Exec(`UPDATE posts SET comments_count = comments_count + 1 WHERE id = ?`, postid).Error
+	if errs != nil {
+		return errs
 	}
 
 	return nil

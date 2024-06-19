@@ -68,7 +68,7 @@ func (ad *tweetClient) GetOurTweet(id int) ([]models.PostResponse, error) {
 		Id: int64(id),
 	})
 	if err != nil {
-		return []models.PostResponse{}, errors.New("error in getting post details")
+		return []models.PostResponse{}, err
 	}
 
 	var posdetials []models.PostResponse
@@ -78,6 +78,8 @@ func (ad *tweetClient) GetOurTweet(id int) ([]models.PostResponse, error) {
 			UserID:      int(ud.Id),
 			Description: ud.Description,
 			Url:         ud.Url,
+			Likes:       int(ud.Like),
+			Comments:    int(ud.Comment),
 			CreatedAt:   ud.Time.AsTime(),
 		})
 	}
@@ -99,6 +101,8 @@ func (ad *tweetClient) GetOthersTweet(id int) ([]models.PostResponse, error) {
 			UserID:      int(ud.Id),
 			Description: ud.Description,
 			Url:         ud.Url,
+			Likes:       int(ud.Like),
+			Comments:    int(ud.Comment),
 			CreatedAt:   ud.Time.AsTime(),
 		})
 	}

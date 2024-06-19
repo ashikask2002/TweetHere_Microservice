@@ -3,11 +3,13 @@ package domain
 import "time"
 
 type Post struct {
-	ID          uint      `json:"id" gorm:"primary_key;not null"`
-	UserID      uint      `json:"user_id" gorm:"not null"`
-	Description string    `json:"description" gorm:"not null"`
-	MediaURL    string    `json:"media"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID            uint      `json:"id" gorm:"primary_key;not null"`
+	UserID        uint      `json:"user_id" gorm:"not null"`
+	Description   string    `json:"description" gorm:"not null"`
+	MediaURL      string    `json:"media"`
+	LikesCount    uint      `json:"likes_count" gorm:"default:0"`
+	CommentsCount uint      `json:"comments_count" gorm:"default:0"`	
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 type Like struct {

@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	
 )
 
 type ServerHttp struct {
@@ -91,7 +90,7 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 }
 
 func (s *ServerHttp) Start() {
-	log.Printf("starting server on :3000")
+	log.Printf("starting server on :5000")
 	err := s.engine.Run(":5000")
 	if err != nil {
 		log.Printf("error while starting the server")

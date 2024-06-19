@@ -72,6 +72,8 @@ func (ad *TweetServer) GetOurTweet(ctx context.Context, req *pb.GetOurTweetReque
 			Id:          int64(details.UserID),
 			Description: details.Description,
 			Url:         details.Url,
+			Like:        int64(details.Likes),
+			Comment:     int64(details.Comments),
 			Time:        timestamppb.New(details.CreatedAt),
 		})
 	}
@@ -98,6 +100,8 @@ func (ad *TweetServer) GetOthersTweet(ctx context.Context, req *pb.GetOthersTwee
 			Id:          int64(details.UserID),
 			Description: details.Description,
 			Url:         details.Url,
+			Like:        int64(details.Likes),
+			Comment:     int64(details.Comments),
 			Time:        timestamppb.New(details.CreatedAt),
 		})
 	}
@@ -238,7 +242,7 @@ func (ad *TweetServer) RplyCommentPost(ctx context.Context, req *pb.RplyCommentP
 
 func (ad *TweetServer) GetComments(ctx context.Context, req *pb.GetCommentsRequest) (*pb.GetCommentsResponse, error) {
 	logEntry := logging.GetLogger().WithField("method", "GetComments")
-    logEntry.Info("Processing GetComments request for post ID:", req.GetPostid())
+	logEntry.Info("Processing GetComments request for post ID:", req.GetPostid())
 
 	postid := req.Postid
 
@@ -268,7 +272,7 @@ func (ad *TweetServer) GetComments(ctx context.Context, req *pb.GetCommentsReque
 
 func (ad *TweetServer) EditComments(ctx context.Context, req *pb.EditCommentsRequet) (*pb.EditCommentsResponse, error) {
 	logEntry := logging.GetLogger().WithField("method", "EditComments")
-    logEntry.Info("Processing EditComments request for user ID:", req.GetId(), ", comment ID:", req.GetCommentid(), ", new comment:", req.GetComment())
+	logEntry.Info("Processing EditComments request for user ID:", req.GetId(), ", comment ID:", req.GetCommentid(), ", new comment:", req.GetComment())
 	id := req.Id
 	commentid := req.Commentid
 	comment := req.Comment
@@ -284,7 +288,7 @@ func (ad *TweetServer) EditComments(ctx context.Context, req *pb.EditCommentsReq
 
 func (ad *TweetServer) DeleteComments(ctx context.Context, req *pb.DeleteCommentsRequest) (*pb.DeleteCommentsResponse, error) {
 	logEntry := logging.GetLogger().WithField("method", "DeleteComments")
-    logEntry.Info("Processing DeleteComments request for user ID:", req.GetId(), ", comment ID:", req.GetCommentid())
+	logEntry.Info("Processing DeleteComments request for user ID:", req.GetId(), ", comment ID:", req.GetCommentid())
 	id := req.Id
 	commentid := req.Commentid
 

@@ -133,7 +133,8 @@ func (ad *AuthHandler) UserLogin(c *gin.Context) {
 // @Description	Update profile handler for users
 // @Tags			User
 // @Accept			json
-// @Produce		json
+// @Produce		    json
+// @Security 		Bearer
 // @Param			userDetails	body		models.UserProfile	true	"User profile details"
 // @Success		200			{object}	response.Response{}
 // @Failure		400			{object}	response.Response{}
@@ -172,6 +173,7 @@ func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 // @Tags			Admin
 // @Accept			json
 // @Produce		json
+// @Security 		Bearer
 // @Param			page	query	int	true	"Page number for pagination"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
@@ -304,7 +306,7 @@ func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 
 }
 
-// @Summary		Get User Details
+// @Summary		Get your Details
 // @Description	Retrieves details of the logged-in user
 // @Tags			User
 // @Accept			json

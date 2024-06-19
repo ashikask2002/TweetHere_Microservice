@@ -154,6 +154,8 @@ type PostResponse struct {
 	UserID      int       `json:"user_id"`
 	Description string    `json:"description"`
 	Url         string    `json:"url" gorm:"column:media_url"`
+	Likes       int       `json:"likes"`
+	Comments    int       `json:"comments"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 

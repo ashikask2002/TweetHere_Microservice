@@ -11,6 +11,22 @@ definitions:
     - email
     - password
     type: object
+  models.ChangePassword:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+      re_password:
+        type: string
+    type: object
+  models.OTPData:
+    properties:
+      phone:
+        type: string
+    required:
+    - phone
+    type: object
   models.UserLogin:
     properties:
       email:
@@ -22,6 +38,11 @@ definitions:
     required:
     - email
     - password
+    type: object
+  models.UserOTPLogin:
+    properties:
+      email:
+        type: string
     type: object
   models.UserProfile:
     properties:
@@ -58,6 +79,16 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  models.VerifyData:
+    properties:
+      code:
+        type: string
+      phone:
+        type: string
+    required:
+    - code
+    - phone
     type: object
   response.Response:
     properties:
@@ -101,6 +132,95 @@ paths:
       summary: Admin Login
       tags:
       - Admin
+  /admins/block:
+    patch:
+      consumes:
+      - application/json
+      description: Blocks a user by ID
+      parameters:
+      - description: User ID to block
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Block User
+      tags:
+      - Admin
+  /admins/unblock:
+    patch:
+      consumes:
+      - application/json
+      description: Unblocks a user by ID
+      parameters:
+      - description: User ID to unblock
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Unblock User
+      tags:
+      - Admin
+  /admins/userdetails:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user details for admin management
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get User Details
+      tags:
+      - Admin
   /user/login:
     post:
       consumes:
@@ -129,6 +249,36 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: User Login
+      tags:
+      - User
+  /user/otplogin:
+    post:
+      consumes:
+      - application/json
+      description: Generates OTP for user login
+      parameters:
+      - description: User OTP login details
+        in: body
+        name: userDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserOTPLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User OTP Login
       tags:
       - User
   /user/signup:
@@ -161,6 +311,544 @@ paths:
       summary: User Sign Up
       tags:
       - User
+  /users/acceptfollowreq:
+    post:
+      consumes:
+      - application/json
+      description: Accepts a follow request from another user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: User ID to accept follow request from
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Accept Follow Request
+      tags:
+      - User
+  /users/addpost:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Adds a new tweet with optional images
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Tweet description
+        in: formData
+        name: discription
+        required: true
+        type: string
+      - description: Image file(s) to upload
+        in: formData
+        name: files
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add Tweet
+      tags:
+      - Tweet
+  /users/changepassword:
+    patch:
+      consumes:
+      - application/json
+      description: Changes the password of the logged-in user
+      parameters:
+      - description: User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: New password details
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Change Password
+      tags:
+      - User
+  /users/commentpost:
+    post:
+      consumes:
+      - application/json
+      description: Adds a comment to a post, optionally as a reply to another comment
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Comment content
+        in: query
+        name: comment
+        required: true
+        type: string
+      - description: Parent comment ID (for replying)
+        in: query
+        name: parentid
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Comment Post
+      tags:
+      - Tweet
+  /users/deletecomment:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a specific comment
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Comment ID
+        in: query
+        name: commentid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete Comment
+      tags:
+      - Tweet
+  /users/deletpost:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a user's post
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete Post
+      tags:
+      - Tweet
+  /users/editcomment:
+    put:
+      consumes:
+      - application/json
+      description: Edits a specific comment
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Comment ID
+        in: query
+        name: commentid
+        required: true
+        type: integer
+      - description: Updated comment text
+        in: query
+        name: comment
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Comment
+      tags:
+      - Tweet
+  /users/editpost:
+    patch:
+      consumes:
+      - application/json
+      description: Edits a user's tweet with a new description
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Tweet ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: New tweet description
+        in: query
+        name: discription
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Tweet
+      tags:
+      - Tweet
+  /users/followers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the followers of the logged-in user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Followers
+      tags:
+      - User
+  /users/followings:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the users that the logged-in user is following
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Followings
+      tags:
+      - User
+  /users/followreq:
+    post:
+      consumes:
+      - application/json
+      description: Sends a follow request to another user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: User ID to send follow request to
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Send Follow Request
+      tags:
+      - User
+  /users/getcomments:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all comments for a specific post
+      parameters:
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Comments
+      tags:
+      - Tweet
+  /users/getotherspost:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all posts created by a specific user
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Other User's Posts
+      tags:
+      - Tweet
+  /users/getourpost:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all posts created by the logged-in user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get User's Posts
+      tags:
+      - Tweet
+  /users/getyoudetails:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of the logged-in user
+      parameters:
+      - description: User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get your Details
+      tags:
+      - User
+  /users/likepost:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to like a post
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Like Post
+      tags:
+      - Tweet
   /users/profile:
     put:
       consumes:
@@ -188,7 +876,239 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
       summary: User Update Profile
+      tags:
+      - User
+  /users/profilepic:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads profile picture for the logged-in user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Image file to upload
+        in: formData
+        name: files
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Upload Profile Picture
+      tags:
+      - User
+  /users/savepost:
+    post:
+      consumes:
+      - application/json
+      description: Adds a post to bookmarks (saves it)
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Save Post
+      tags:
+      - Tweet
+  /users/sendotp:
+    post:
+      consumes:
+      - application/json
+      description: Sends OTP to the provided phone number
+      parameters:
+      - description: Phone number to send OTP to
+        in: body
+        name: phoneNumber
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Send OTP
+      tags:
+      - User
+  /users/unfollow:
+    post:
+      consumes:
+      - application/json
+      description: Unfollows a user
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: User ID to unfollow
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Unfollow User
+      tags:
+      - User
+  /users/unlikepost:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to unlike a post
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Unlike Post
+      tags:
+      - Tweet
+  /users/unsavepost:
+    post:
+      consumes:
+      - application/json
+      description: Removes a post from bookmarks (unsaves it)
+      parameters:
+      - description: Logged-in User ID
+        in: header
+        name: id
+        required: true
+        type: integer
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Unsave Post
+      tags:
+      - Tweet
+  /users/verifyotp:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the OTP provided by the user
+      parameters:
+      - description: Verification code received via OTP
+        in: body
+        name: code
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Verify OTP
       tags:
       - User
 securityDefinitions:
