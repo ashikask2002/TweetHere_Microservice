@@ -34,6 +34,7 @@ const (
 	TweetService_GetComments_FullMethodName     = "/tweet.TweetService/GetComments"
 	TweetService_EditComments_FullMethodName    = "/tweet.TweetService/EditComments"
 	TweetService_DeleteComments_FullMethodName  = "/tweet.TweetService/DeleteComments"
+	TweetService_Home_FullMethodName            = "/tweet.TweetService/Home"
 )
 
 // TweetServiceClient is the client API for TweetService service.
@@ -55,6 +56,7 @@ type TweetServiceClient interface {
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	EditComments(ctx context.Context, in *EditCommentsRequet, opts ...grpc.CallOption) (*EditCommentsResponse, error)
 	DeleteComments(ctx context.Context, in *DeleteCommentsRequest, opts ...grpc.CallOption) (*DeleteCommentsResponse, error)
+	Home(ctx context.Context, in *HomeRequest, opts ...grpc.CallOption) (*HomeResponse, error)
 }
 
 type tweetServiceClient struct {
@@ -200,6 +202,15 @@ func (c *tweetServiceClient) DeleteComments(ctx context.Context, in *DeleteComme
 	return out, nil
 }
 
+func (c *tweetServiceClient) Home(ctx context.Context, in *HomeRequest, opts ...grpc.CallOption) (*HomeResponse, error) {
+	out := new(HomeResponse)
+	err := c.cc.Invoke(ctx, TweetService_Home_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TweetServiceServer is the server API for TweetService service.
 // All implementations must embed UnimplementedTweetServiceServer
 // for forward compatibility
@@ -219,6 +230,7 @@ type TweetServiceServer interface {
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	EditComments(context.Context, *EditCommentsRequet) (*EditCommentsResponse, error)
 	DeleteComments(context.Context, *DeleteCommentsRequest) (*DeleteCommentsResponse, error)
+	Home(context.Context, *HomeRequest) (*HomeResponse, error)
 	mustEmbedUnimplementedTweetServiceServer()
 }
 
@@ -270,6 +282,9 @@ func (UnimplementedTweetServiceServer) EditComments(context.Context, *EditCommen
 }
 func (UnimplementedTweetServiceServer) DeleteComments(context.Context, *DeleteCommentsRequest) (*DeleteCommentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComments not implemented")
+}
+func (UnimplementedTweetServiceServer) Home(context.Context, *HomeRequest) (*HomeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Home not implemented")
 }
 func (UnimplementedTweetServiceServer) mustEmbedUnimplementedTweetServiceServer() {}
 
@@ -554,6 +569,24 @@ func _TweetService_DeleteComments_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TweetService_Home_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HomeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TweetServiceServer).Home(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TweetService_Home_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TweetServiceServer).Home(ctx, req.(*HomeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TweetService_ServiceDesc is the grpc.ServiceDesc for TweetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -620,6 +653,10 @@ var TweetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteComments",
 			Handler:    _TweetService_DeleteComments_Handler,
+		},
+		{
+			MethodName: "Home",
+			Handler:    _TweetService_Home_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
