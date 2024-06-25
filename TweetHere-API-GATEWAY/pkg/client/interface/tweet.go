@@ -21,4 +21,5 @@ type TweetClient interface {
 	GetComments(postid int) ([]models.CommentsResponse, error)
 	EditComments(id int, commentid int, comment string) error
 	DeleteComments(id int, commentid int) error
+	Home(useid int)([]models.PostResponses,error)
 }

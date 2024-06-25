@@ -30,6 +30,7 @@ service AuthService{
      rpc DoesUserExist(DoesUserExistRequest) returns(DoesUserExistResponse){};
      rpc FindUserName(FindUserNameRequest) returns(FindUserNameResponse){}
      rpc UserData(UserDataRequest) returns(UserDataResponse){}
+     rpc GetFollowingUsers (GetFollowingUsersRequest) returns (GetFollowingUsersResponse){}
     
 
 }
@@ -318,4 +319,16 @@ message UserDataResponse{
     int64 userid =1;
     string username=2;
     string profile=3;
+}
+
+message GetFollowingUsersRequest{
+    int64 userID = 1;
+}
+
+message Followuser{
+    int64 followinguser = 1;
+}
+
+message GetFollowingUsersResponse{
+    repeated Followuser user = 1;
 }

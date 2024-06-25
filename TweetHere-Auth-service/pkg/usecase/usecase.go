@@ -552,3 +552,11 @@ func (ad *authUseCase) UserData(id int) (models.UserData, error) {
 	return details, nil
 
 }
+
+func (ur *authUseCase) GetFollowingUsers(userID int) ([]models.FollowUsers, error) {
+	data, err := ur.authRepository.GetFollowingUsers(userID)
+	if err != nil {
+		return []models.FollowUsers{}, err
+	}
+	return data, nil
+}

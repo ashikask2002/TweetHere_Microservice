@@ -439,3 +439,13 @@ func (at *authRepository) UserData(id int) (models.UserData, error) {
 	}
 	return details, nil
 }
+
+
+func (ad *authRepository) GetFollowingUsers(userID int) ([]models.FollowUsers, error){
+	var Users []models.FollowUsers
+	err := ad.DB.Raw(`SELECT following_user FROM followings WHERE user_id = ?`, userID).Scan(&Users).Error
+	if err != nil {
+		return []models.FollowUsers{}, err
+	}
+	return Users, nil
+}

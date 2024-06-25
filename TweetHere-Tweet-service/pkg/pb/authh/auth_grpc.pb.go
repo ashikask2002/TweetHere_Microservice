@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_DoesUserExist_FullMethodName = "/admin.AuthService/DoesUserExist"
-	AuthService_FindUserName_FullMethodName  = "/admin.AuthService/FindUserName"
-	AuthService_UserData_FullMethodName      = "/admin.AuthService/UserData"
+	AuthService_DoesUserExist_FullMethodName     = "/admin.AuthService/DoesUserExist"
+	AuthService_FindUserName_FullMethodName      = "/admin.AuthService/FindUserName"
+	AuthService_UserData_FullMethodName          = "/admin.AuthService/UserData"
+	AuthService_GetFollowingUsers_FullMethodName = "/admin.AuthService/GetFollowingUsers"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -31,6 +32,7 @@ type AuthServiceClient interface {
 	DoesUserExist(ctx context.Context, in *DoesUserExistRequest, opts ...grpc.CallOption) (*DoesUserExistResponse, error)
 	FindUserName(ctx context.Context, in *FindUserNameRequest, opts ...grpc.CallOption) (*FindUserNameResponse, error)
 	UserData(ctx context.Context, in *UserDataRequest, opts ...grpc.CallOption) (*UserDataResponse, error)
+	GetFollowingUsers(ctx context.Context, in *GetFollowingUsersRequest, opts ...grpc.CallOption) (*GetFollowingUsersResponse, error)
 }
 
 type authServiceClient struct {
@@ -68,6 +70,15 @@ func (c *authServiceClient) UserData(ctx context.Context, in *UserDataRequest, o
 	return out, nil
 }
 
+func (c *authServiceClient) GetFollowingUsers(ctx context.Context, in *GetFollowingUsersRequest, opts ...grpc.CallOption) (*GetFollowingUsersResponse, error) {
+	out := new(GetFollowingUsersResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetFollowingUsers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type AuthServiceServer interface {
 	DoesUserExist(context.Context, *DoesUserExistRequest) (*DoesUserExistResponse, error)
 	FindUserName(context.Context, *FindUserNameRequest) (*FindUserNameResponse, error)
 	UserData(context.Context, *UserDataRequest) (*UserDataResponse, error)
+	GetFollowingUsers(context.Context, *GetFollowingUsersRequest) (*GetFollowingUsersResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedAuthServiceServer) FindUserName(context.Context, *FindUserNam
 }
 func (UnimplementedAuthServiceServer) UserData(context.Context, *UserDataRequest) (*UserDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserData not implemented")
+}
+func (UnimplementedAuthServiceServer) GetFollowingUsers(context.Context, *GetFollowingUsersRequest) (*GetFollowingUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFollowingUsers not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -158,6 +173,24 @@ func _AuthService_UserData_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetFollowingUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFollowingUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetFollowingUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetFollowingUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetFollowingUsers(ctx, req.(*GetFollowingUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserData",
 			Handler:    _AuthService_UserData_Handler,
+		},
+		{
+			MethodName: "GetFollowingUsers",
+			Handler:    _AuthService_GetFollowingUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

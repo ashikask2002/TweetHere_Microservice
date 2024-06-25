@@ -30,4 +30,6 @@ type AdminUseCase interface {
 	DoesUserExist(id int64) bool
 	FindUserName(id int64) (string, error)
 	UserData(id int) (models.UserData,error)
+	GetFollowingUsers(userID int)([]models.FollowUsers,error)
+	
 }

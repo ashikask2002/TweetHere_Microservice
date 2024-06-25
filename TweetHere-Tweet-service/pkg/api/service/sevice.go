@@ -300,3 +300,33 @@ func (ad *TweetServer) DeleteComments(ctx context.Context, req *pb.DeleteComment
 	logEntry.Info("Comment successfully deleted for user ID:", req.Id)
 	return &pb.DeleteCommentsResponse{}, nil
 }
+
+func (ad *TweetServer) Home(ctx context.Context, req *pb.HomeRequest) (*pb.HomeResponse, error) {
+	data, err := ad.tweetUseCase.Home(int(req.Userid))
+	if err != nil {
+		return &pb.HomeResponse{}, err
+	}
+	var allpostResponses []*pb.CreatePostResponse
+	for _, post := range data {
+		userdata := &pb.UserData{
+			Userid:   int64(post.Author.UserID),
+			Username: post.Author.Username,
+			Imageurl: post.Author.Profile,
+		}
+
+		details := &pb.CreatePostResponse{
+			Id:          int64(post.ID),
+			User:        userdata,
+			Description: post.Description,
+			Url:         post.Url,
+			Like:        int64(post.Likes),
+			Comment:     int64(post.Comments),
+			Time:        timestamppb.New(post.CreatedAt),
+		}
+
+		allpostResponses = append(allpostResponses, details)
+	}
+	return &pb.HomeResponse{
+		Allpost: allpostResponses,
+	}, nil
+}

@@ -527,3 +527,20 @@ func (ad *AuthServer) UserData(ctx context.Context, req *pb.UserDataRequest) (*p
 		Profile:  res.Profile,
 	}, nil
 }
+
+func (ad *AuthServer) GetFollowingUsers(ctx context.Context, req *pb.GetFollowingUsersRequest) (*pb.GetFollowingUsersResponse, error) {
+	data, err := ad.authUseCase.GetFollowingUsers(int(req.UserID))
+	if err != nil {
+		return &pb.GetFollowingUsersResponse{}, err
+	}
+	var followusers []*pb.Followuser
+	for _, user := range data {
+		followusers = append(followusers, &pb.Followuser{
+			Followinguser: int64(user.FollowingUser),
+		})
+
+	}
+	return &pb.GetFollowingUsersResponse{
+		User: followusers,
+	}, nil
+}

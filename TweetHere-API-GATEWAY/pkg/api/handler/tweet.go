@@ -535,3 +535,18 @@ func (ad *TweetHandler) DeleteComments(c *gin.Context) {
 	c.JSON(http.StatusOK, succesres)
 
 }
+
+func (ad *TweetHandler) Home(c *gin.Context){
+	id_string, _ := c.Get("id")
+	id := id_string.(int)
+
+	data, err := ad.GRPC_Client.Home(id)
+	if err != nil{
+		errs := response.ClientResponse(http.StatusBadRequest,"error in getting Home",nil,err.Error())
+		c.JSON(http.StatusBadRequest,errs)
+		return
+	}
+
+	succesres := response.ClientResponse(http.StatusOK,"successfully got the Homepage",data,nil)
+	c.JSON(http.StatusOK,succesres)
+}

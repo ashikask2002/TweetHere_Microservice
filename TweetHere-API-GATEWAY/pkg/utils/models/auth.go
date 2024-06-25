@@ -166,3 +166,19 @@ type CommentsResponse struct {
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type UserData struct {
+	UserId   uint   `json:"user_id"`
+	Username string `json:"username"`
+	Profile  string `json:"profile"`
+}
+
+type PostResponses struct {
+	ID          uint      `json:"id"`
+	Author      UserData  `json:"author"`
+	Description string    `json:"description"`
+	Url         string    `json:"url" gorm:"column:media_url"`
+	Likes       int       `json:"likes"`
+	Comments    int       `json:"comments"`
+	CreatedAt   time.Time `json:"created_at"`
+}

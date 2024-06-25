@@ -365,3 +365,32 @@ func (ad *tweetUseCase) DeleteComments(id int, commentid int) error {
 		return errors.New("this is not your comment")
 	}
 }
+
+func (ad *tweetUseCase) Home(userid int) ([]models.PostResponses, error) {
+	followingUsers, err := ad.authRepository.GetFollowingUsers(userid)
+	if err != nil {
+		return []models.PostResponses{}, err
+	}
+	posts, err := ad.tweetRepository.Home(followingUsers)
+	if err != nil {
+		return []models.PostResponses{}, err
+	}
+	var Allpostes []models.PostResponses
+
+	for _, v := range posts {
+		userdata, err := ad.authRepository.UserData(v.UserID)
+		if err != nil {
+			return []models.PostResponses{}, err
+		}
+		details := models.PostResponses{
+			Author:      userdata,
+			Description: v.Description,
+			Url:         v.Url,
+			Likes:       int(v.Likes),
+			Comments:    int(v.Comments),
+			CreatedAt:   v.CreatedAt,
+		}
+		Allpostes = append(Allpostes, details)
+	}
+	return Allpostes, nil
+}

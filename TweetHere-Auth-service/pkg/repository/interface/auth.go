@@ -47,4 +47,5 @@ type AuthRepository interface {
 	UpdateBIO(bio string, userID int) error
 	CheckEmail(email string) bool
 	UserDetails(userID int) (models.UserProfileResponse, error)
+	GetFollowingUsers(userID int) ([]models.FollowUsers, error)
 }

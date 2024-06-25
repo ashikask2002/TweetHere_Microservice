@@ -121,3 +121,6 @@ type UserData struct {
 	Username string `json:"username"`
 	Profile  string `json:"profile"`
 }
+type FollowUsers struct {
+	FollowingUser int `json:"following_user"`
+}

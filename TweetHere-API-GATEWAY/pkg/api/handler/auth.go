@@ -173,7 +173,7 @@ func (ad *AuthHandler) UserUpdateProfile(c *gin.Context) {
 // @Tags			Admin
 // @Accept			json
 // @Produce		json
-// @Security 		Bearer
+// @Security 		bearer
 // @Param			page	query	int	true	"Page number for pagination"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
@@ -311,7 +311,6 @@ func (ad *AuthHandler) ChangePassword(c *gin.Context) {
 // @Tags			User
 // @Accept			json
 // @Produce		json
-// @Param			id	header	int	true	"User ID"
 // @Success		200		{object}	response.Response{}
 // @Failure		400		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}

@@ -60,3 +60,20 @@ func (au *authClient) UserData(userid int) (models.UserData, error) {
 		Profile:  res.Profile,
 	}, nil
 }
+
+func (au *authClient) GetFollowingUsers(userid int) ([]models.Users, error) {
+	data, err := au.Client.GetFollowingUsers(context.Background(), &pb.GetFollowingUsersRequest{
+		UserID: int64(userid),
+	})
+	if err != nil {
+		return []models.Users{}, err
+	}
+	var followusers []models.Users
+	for _, pbUser := range data.User {
+		followuser := models.Users{
+			FollowingUser: int(pbUser.Followinguser),
+		}
+		followusers = append(followusers, followuser)
+	}
+	return followusers, nil
+}

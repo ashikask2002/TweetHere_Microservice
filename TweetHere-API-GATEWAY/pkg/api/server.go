@@ -64,6 +64,7 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 			usermanagement.PATCH("/editcomment", tweetHandler.EditComments)
 			usermanagement.DELETE("/deletecomment", tweetHandler.DeleteComments)
 			usermanagement.GET("/getcomments", tweetHandler.GetComments)
+			usermanagement.GET("/home", tweetHandler.Home)
 		}
 
 		adminmanagement := router.Group("/admins")
@@ -91,7 +92,7 @@ func NewServerHTTP(authHandler *handler.AuthHandler, tweetHandler *handler.Tweet
 
 func (s *ServerHttp) Start() {
 	log.Printf("starting server on :5000")
-	err := s.engine.Run(":5000")
+	err := s.engine.Run(":3000")
 	if err != nil {
 		log.Printf("error while starting the server")
 	}

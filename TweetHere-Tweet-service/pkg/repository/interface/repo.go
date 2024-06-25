@@ -21,4 +21,5 @@ type TweetRepository interface {
 	DeleteComments(commentid int) error
 	GetPostedUserID(id int) (int, error)
 	GetPostfromcomment(id int) (int, error)
+	Home(users []models.Users) ([]models.PostResponse,error)
 }

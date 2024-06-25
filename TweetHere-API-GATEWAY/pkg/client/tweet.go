@@ -245,3 +245,33 @@ func (ad *tweetClient) DeleteComments(id int, commentid int) error {
 	}
 	return nil
 }
+
+func (ad *tweetClient) Home(userid int) ([]models.PostResponses, error) {
+	data, err := ad.Client.Home(context.Background(), &pb.HomeRequest{
+		Userid: int64(userid),
+	})
+	if err != nil {
+		return []models.PostResponses{}, err
+	}
+
+	var postresponses []models.PostResponses
+
+	for _, post := range data.Allpost {
+		user := models.UserData{
+			UserId:   uint(post.User.Userid),
+			Username: post.User.Username,
+			Profile:  post.User.Imageurl,
+		}
+		postresponse := models.PostResponses{
+			ID:          uint(post.Id),
+			Author:      user,
+			Description: post.Description,
+			Url:         post.Url,
+			Likes:       int(post.Like),
+			Comments:    int(post.Comment),
+			CreatedAt:   post.Time.AsTime(),
+		}
+		postresponses = append(postresponses, postresponse)
+	}
+	return postresponses, nil
+}

@@ -103,7 +103,7 @@ info:
   contact:
     name: API Support
   description: Tweet Here is a social Media Platform
-  title: Go + Gin SocailMedia TweetHere
+  title: Go + Gin SocialMedia TweetHereeee
   version: 1.0.0
 paths:
   /admin/login:
@@ -217,7 +217,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - Bearer: []
+      - bearer: []
       summary: Get User Details
       tags:
       - Admin
@@ -791,12 +791,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves details of the logged-in user
-      parameters:
-      - description: User ID
-        in: header
-        name: id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -1112,8 +1106,8 @@ paths:
       tags:
       - User
 securityDefinitions:
-  BearerTokenAuth:
-    in: headercd
+  bearer:
+    in: header
     name: Authorization
     type: apiKey
 swagger: "2.0"

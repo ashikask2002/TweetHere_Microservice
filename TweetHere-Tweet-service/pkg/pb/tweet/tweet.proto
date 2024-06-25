@@ -21,6 +21,7 @@ service TweetService{
     rpc GetComments(GetCommentsRequest) returns(GetCommentsResponse){};
     rpc EditComments(EditCommentsRequet) returns(EditCommentsResponse){};
     rpc DeleteComments(DeleteCommentsRequest) returns(DeleteCommentsResponse){};
+    rpc Home(HomeRequest) returns(HomeResponse){};
 }
 
 message AddTweetRequest{
@@ -177,4 +178,28 @@ message DeleteCommentsRequest{
 
 message DeleteCommentsResponse{
     
+}
+
+message HomeRequest{
+    int64 userid=1;
+}
+
+message HomeResponse{
+    repeated CreatePostResponse allpost =1;
+}
+
+message UserData{
+    int64 userid=1;
+    string username =2;
+    string imageurl=3;
+}
+
+message CreatePostResponse{
+    int64 id=1;
+    UserData user=2;
+    string description =3;
+    string url=4;
+    int64 like=5;
+    int64 comment=6;
+    google.protobuf.Timestamp time = 7;
 }

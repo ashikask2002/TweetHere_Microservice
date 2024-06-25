@@ -19,7 +19,7 @@ func AdminAuthMiddleware(c *gin.Context) {
 	tokenheader := c.GetHeader("Authorization")
 	fmt.Println("tokennnnnnn", tokenheader)
 	if tokenheader == "" {
-		response := response.ClientResponse(http.StatusUnauthorized, "no auth head provided", nil, nil)
+		response := response.ClientResponse(http.StatusUnauthorized, "no auth head provideddddddddasc", nil, nil)
 		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
 		return
@@ -100,8 +100,9 @@ func UserAuthMiddleware(c *gin.Context) {
 
 func AuthMiddleware(c *gin.Context) {
 	tokenheader := c.GetHeader("Authorization")
+	fmt.Println("cc-----------------------------", tokenheader)
 	if tokenheader == "" {
-		response := response.ClientResponse(http.StatusUnauthorized, "no auth head provided", nil, nil)
+		response := response.ClientResponse(http.StatusUnauthorized, "no auth head providedddd", nil, nil)
 		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
 		return

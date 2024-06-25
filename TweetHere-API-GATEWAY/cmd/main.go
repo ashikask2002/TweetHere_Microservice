@@ -11,12 +11,12 @@ import (
 	_ "github.com/swaggo/gin-swagger"
 )
 
-// @title Go + Gin SocailMedia TweetHere
+// @title Go + Gin SocialMedia TweetHereeee
 // @version 1.0.0
 // @description Tweet Here is a social Media Platform
 // @contact.name API Support
-// @securityDefinitions.apikey BearerTokenAuth
-// @in headercd
+// @securityDefinitions.apikey bearer
+// @in header
 // @name Authorization
 // @host localhost:5000
 // @BasePath /

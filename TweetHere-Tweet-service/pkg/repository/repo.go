@@ -295,3 +295,22 @@ func (th *tweetRepository) GetPostfromcomment(id int) (int, error) {
 	}
 	return idd, nil
 }
+
+func (th *tweetRepository) Home(users []models.Users) ([]models.PostResponse, error) {
+	var latestPosts []models.PostResponse
+
+	for _, user := range users {
+		var userPosts []models.PostResponse
+		err := th.DB.Raw(`SELECT user_id, description, media_url, likes_count, comments_count, created_at 
+                          FROM posts 
+                          WHERE user_id = ? AND created_at IS NOT NULL
+                          ORDER BY created_at DESC`, user.FollowingUser).Scan(&userPosts).Error
+
+		if err != nil {
+			return nil, err
+		}
+
+		latestPosts = append(latestPosts, userPosts...)
+	}
+	return latestPosts, nil
+}

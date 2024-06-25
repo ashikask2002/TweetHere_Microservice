@@ -32,3 +32,17 @@ type Notification struct {
 	Message   string    `json:"Message"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type PostResponses struct {
+	ID          uint      `json:"id"`
+	Author      UserData  `json:"author"`
+	Description string    `json:"description"`
+	Url         string    `json:"url" gorm:"column:media_url"`
+	Likes       int       `json:"likes"`
+	Comments    int       `json:"comments"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type Users struct {
+	FollowingUser int `json:"following_user"`
+}

@@ -149,7 +149,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "bearer": []
                     }
                 ],
                 "description": "Retrieves user details for admin management",
@@ -1059,15 +1059,6 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Get your Details",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1693,10 +1684,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BearerTokenAuth": {
+        "bearer": {
             "type": "apiKey",
             "name": "Authorization",
-            "in": "headercd"
+            "in": "header"
         }
     }
 }`
@@ -1707,7 +1698,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Go + Gin SocailMedia TweetHere",
+	Title:            "Go + Gin SocialMedia TweetHereeee",
 	Description:      "Tweet Here is a social Media Platform",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

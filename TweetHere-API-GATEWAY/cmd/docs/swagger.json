@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "Tweet Here is a social Media Platform",
-        "title": "Go + Gin SocailMedia TweetHere",
+        "title": "Go + Gin SocialMedia TweetHereeee",
         "contact": {
             "name": "API Support"
         },
@@ -141,7 +141,7 @@
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "bearer": []
                     }
                 ],
                 "description": "Retrieves user details for admin management",
@@ -1051,15 +1051,6 @@
                     "User"
                 ],
                 "summary": "Get your Details",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1685,10 +1676,10 @@
         }
     },
     "securityDefinitions": {
-        "BearerTokenAuth": {
+        "bearer": {
             "type": "apiKey",
             "name": "Authorization",
-            "in": "headercd"
+            "in": "header"
         }
     }
 }
